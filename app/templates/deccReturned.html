@@ -1,0 +1,22 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+{% block content %}
+<h1>Process Returned Files</h1>
+<form action="" method="post" name="decc">
+    {{form.hidden_tag()}}
+    <p>
+        Select which file to input:<br>
+        {{form.inFileName()}}
+    </p>
+    <p>
+        Name the output file:<br>
+        {{form.outFileName()}}
+    </p>
+    <p>
+        Is this a Voter Registration File?
+        {{form.isVR()}}
+    </p>
+    <p><input type="submit" value="Run"></p>
+
+</form>
+{% endblock %}

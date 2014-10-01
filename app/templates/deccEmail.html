@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Email Template</h1>
+<hr>
+<div><font style="font-family:arial,sans-serif;font-size:13px" color="#000000"><b><u>Project {{ client }} - ***CLIENT NAME***: {{ numFiles }} new files; {{ numRecords }} new records</u></b></font></div><div><font style="font-family:arial,sans-serif;font-size:13px" color="#000000"><b><u><br></u></b></font></div></div><span style="font-family:arial,sans-serif;font-size:13px"><font color="#000000"><b><span style="background-color:rgb(255,255,255)">Rush?: </span></b><span style="background-color:rgb(255,255,255)">{{ rush }}<br>
+<b>Other time requests?: </b>No<br>
+<br></span></font></span><div style="font-family:arial,sans-serif;font-size:13px"><b><font color="#000000" style="background-color:rgb(255,255,255)">Uploaded to: </font></b></div><ul type="disc">
+<li class="MsoNormal" style="margin-left:15px">
+<span style="background-color:rgb(255,255,255)"><b><font style="font-family:arial,sans-serif;font-size:13px">/To_AGS/</font><font style="font-family:arial,sans-serif;font-size:13px">***CLIENT NAME***</font><font style="font-family:arial,sans-serif;font-size:13px">/{{ typeName }}s/</font></b><font style="font-family:arial,sans-serif;font-size:13px"><u></u><u></u></font></span></li>
+</ul><ul type="disc" style="font-family:arial,sans-serif;font-size:13px"><ul type="circle"><li class="MsoNormal" style="margin-left:15px"><span style="background-color:rgb(255,255,255)"><span style="font-size:10pt">{{ numFiles}} files ({{ startNum }}.pdf  - {{ endNum }}.pdf), {{ numRecords }} {{ typeName }}s</span></span></li></ul></ul><ul type="disc" style="font-family:arial,sans-serif;font-size:13px"><ul type="circle">
+</ul></ul><span style="font-family:arial,sans-serif;font-size:13px"><font color="#000000"><span style="background-color:rgb(255,255,255)"><b>Notes: </b>None</span><br></font></span><div style="font-family:arial,sans-serif;font-size:13px">
+<font face="arial, sans-serif"><font color="#000000"><b>Needed From AGS: </b>None</font></font></div></div>
+</div>
+<hr>
+<p>
+<a href="\decc">Back to DECC</a>
+</p>
+{% endblock %}
+

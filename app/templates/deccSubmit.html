@@ -1,0 +1,41 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+{% block content %}
+<h1>Submit order for Processing</h1>
+<form action="" method="post" name="decc">
+    {{form.hidden_tag()}}
+    <p>
+        Please select which Type to Process:<br>
+        <select id="formType" name="formType">
+          {% for formType in types %}
+          <option value ='{{ types[formType] }}' >{{ formType }}</option>
+          {% endfor %}
+        </select><br>
+        {% for error in form.errors.option %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>       
+    </p>
+    <p>
+       Select which state these forms apply to:<br>
+        {{form.state()}}<br>
+    </p>
+    <p>
+      Was Rush processing requested?
+      {{form.rush()}}
+    </p>
+    <p>
+      Does the client want VAN uploads?
+      {{form.van()}}
+    </p>
+    <p>
+      Does the client want vendor matching?
+      {{form.match()}}
+    </p>
+    <p>
+      Does the client want quad reporting?
+      {{form.quad()}}
+    </p>
+    <p><input type="submit" value="Submit"></p>
+
+</form>
+{% endblock %}

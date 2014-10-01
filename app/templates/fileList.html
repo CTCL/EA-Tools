@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{{ fileNum }} Total Files</h3>
+<a href="/decc">Return to DECC</a>
+<p>
+{% for file in files %}
+    <li>{{ file }} </li>
+{% endfor %}
+</p>
+<a href="/decc">Return to DECC</a>
+{% endblock %}

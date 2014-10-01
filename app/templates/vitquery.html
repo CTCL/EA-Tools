@@ -1,0 +1,14 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+{% block content %}
+<h1>Get Voter Info</h1>
+<form action="" method="post" name="decc">
+    {{form.hidden_tag()}}
+    <p>
+      Please enter an address:<br>
+      {{form.address()}}
+    </p>
+    <p><input type="submit" value="Submit"></p>
+
+</form>
+{% endblock %}
