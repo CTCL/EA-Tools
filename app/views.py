@@ -183,12 +183,11 @@ def processScans():
 
 @app.route('/decc/checkprocessing')
 def checkProcessing():
-  dir = '/home/michael/Dropbox (NOIEF)/EA_DECC/Processing/ready for processing'
   files = [os.path.join(dp, 
-    f) for dp, dn, filenames in os.walk(dir) for f in filenames]
+    f) for dp, dn, filenames in os.walk(deccinputdir) for f in filenames]
   for i in range(0, len(files)):
     files[i] = files[i].replace(
-      '/home/michael/Dropbox (NOIEF)/EA_DECC/Processing/ready for processing/',
+      deccinputdir,
       '')
   return render_template("fileList.html",
     files = files,
