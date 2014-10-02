@@ -26,7 +26,7 @@ class orderSubmission(Form):
 
 
 class DECCReturned(Form):
-  inFileName = SelectField('inFileName')
+  inFileName = SelectField('inFileName', validators = [Required()])
   outFileName = TextField('outFileName', validators = [Required()])
   isVR = BooleanField('isVR')
 

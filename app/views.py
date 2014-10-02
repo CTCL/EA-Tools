@@ -296,9 +296,12 @@ def processShipment():
 def returned():
   files = os.listdir(deccinputdir)
   options = []
+  choices = []
   for file in files:
     options.append(file)
+    choices.append((file, file))
   form = DECCReturned()
+  form.inFileName.choices = choices
   if form.validate_on_submit():
     inFile = deccinputdir + form.inFileName.data
     outFile = deccoutputdir + form.outFileName.data + '.csv'
@@ -307,7 +310,7 @@ def returned():
     flash('File output')
     return redirect('/decc')
   return render_template('deccReturned.html', 
-    form = form, options = options)
+    form = form)
 
 
 @app.route('/decc/email')
