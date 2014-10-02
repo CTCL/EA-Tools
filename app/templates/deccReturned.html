@@ -5,9 +5,8 @@
 <form action="" method="post" name="decc">
     {{form.hidden_tag()}}
     <p>
-        Select which file to input:<br>
-    <p>
         Please select which {{ type }} to Process:<br>
+    </p>
         <select id="inFileName" name="option">
           {% for option in options %}
           <option value ='{{ options[option] }}' >{{ option }}</option>
