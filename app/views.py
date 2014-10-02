@@ -294,6 +294,10 @@ def processShipment():
 
 @app.route('/decc/returned', methods=['GET', 'POST'])
 def returned():
+  files = os.listdir(deccinputdir)
+  options = []
+  for file in files:
+    options.append(file)
   form = DECCReturned()
   if form.validate_on_submit():
     inFile = deccinputdir + form.inFileName.data
@@ -302,7 +306,8 @@ def returned():
     decc.processXLSX.main(isVR, inFile, outFile)
     flash('File output')
     return redirect('/decc')
-  return render_template('deccReturned.html', form = form)
+  return render_template('deccReturned.html', 
+    form = form, options = options)
 
 
 @app.route('/decc/email')

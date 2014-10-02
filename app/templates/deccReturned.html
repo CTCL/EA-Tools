@@ -6,8 +6,19 @@
     {{form.hidden_tag()}}
     <p>
         Select which file to input:<br>
-        {{form.inFileName()}}
-    </p>
+    <p>
+        Please select which {{ type }} to Process:<br>
+        <select id="inFileName" name="option">
+          {% for option in options %}
+          <option value ='{{ options[option] }}' >{{ option }}</option>
+          {% endfor %}
+          {% if type == 'order' %}
+          <option value = '0'>New Order</option>
+          {% endif %}
+        </select><br>
+        {% for error in form.errors.option %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>
     <p>
         Name the output file:<br>
         {{form.outFileName()}}

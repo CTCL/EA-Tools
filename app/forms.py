@@ -26,13 +26,7 @@ class orderSubmission(Form):
 
 
 class DECCReturned(Form):
-  files = os.listdir(deccinputdir)
-  options = []
-  for file in files:
-    option = (file, file)
-    options.append(option)
-  inFileName = SelectField('inFileName', choices = options, 
-    validators = [Required()])
+  inFileName = SelectField('inFileName')
   outFileName = TextField('outFileName', validators = [Required()])
   isVR = BooleanField('isVR')
 
