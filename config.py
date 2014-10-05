@@ -16,11 +16,11 @@ CSRF_ENABLED = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
+          'NH': 'New Hampshire',
           #'CA': 'California',
           #'GA': 'Georgia', 'ID': 'Idaho', 'IN': 'Indiana',
           #'LA': 'Louisiana', #'ME': 'Maine', 'MA': 'Massachusetts',
-          #'NH': 'New Hampshire', 'SD': 'South Dakota', 'TN': 'Tennessee',
-          #'TX': 'Texas'
+          #'SD': 'South Dakota', 'TN': 'Tennessee', #'TX': 'Texas'
           }
 
 scope = '''https://spreadsheets.google.com/feeds
