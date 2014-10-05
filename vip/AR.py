@@ -27,7 +27,7 @@ def getCounties(soup):
     countySelector = soup.find('select', {'name': 'county'})
     countyOptions = countySelector.find_all('option')
     for county in countyOptions:
-        name = county.text
+        name = county.text.upper()
         code = county.get('value')
         countyDict[name] = code
     return countyDict
@@ -39,12 +39,12 @@ def generatePayload(county, lastName, dob, hiddenFields, counties):
     year = dob[:4]
     payload = {
         'nameLast': lastName,
-        'county': counties[county.upper().replace('DE KALB', 'DEKALB').replace(
-            'SAINT ', 'ST_').replace(' ', '_')],
+        'county': counties[county.upper()],
         'dobMonth': month,
         'dobDay': day,
         'dobYear': year,
-        'selectSearchCriteria': '1'
+        'selectSearchCriteria': '1',
+        'electionCombo': '50222_200000'
     }
     payload = dict(payload.items() + hiddenFields.items())
     payload['action'] = 'Search'
@@ -80,7 +80,7 @@ def getPollingPlace(soup):
             street = pollingDict['Address']
         if 'City' in pollingDict:
             city = pollingDict['City']
-        address = '{0} {1}, {2} {3}'.format(street, city, 'AL', zip
+        address = '{0} {1}, {2} {3}'.format(street, city, 'AR', zip
                                             ).replace('   ', ' '
                                                       ).replace('  ', ' ')
     return ppid, name, address
@@ -95,11 +95,13 @@ def getValues(row):
 
 def run(row):
     county, lastName, dob = getValues(row)
-    baseURL = 'https://myinfo.alabamavotes.gov'
+    baseURL = 'https://www.voterview.ar-nova.org'
     form = getFormSoup(baseURL + '/VoterView/PollingPlaceSearch.do')
     hiddenFields, action = getHiddenFields(form)
     counties = getCounties(form)
     payload = generatePayload(county, lastName, dob, hiddenFields, counties)
     response = getResponseSoup(payload, baseURL + action)
+    with open('/home/michael/Desktop/output.html', 'w') as outFile:
+        outFile.write(str(response))
     pollingInfo = getPollingPlace(response)
     return pollingInfo

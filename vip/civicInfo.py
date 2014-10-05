@@ -19,19 +19,29 @@ def getVIPValues(data):
     name = ''
     address = ''
     if 'pollingLocations' in data:
-        values = data['pollingLocations']['address']
-        line2 = ''
-        line3 = ''
-        if 'line2' in values:
-            line2 = values['line2']
-        if 'line3' in values:
-            line3 = values['line3']
-        address = '{0} {1} {2} {4}, {5} {6}'.format(values['line1'], line2,
-                                                    line3, values['city'],
-                                                    values['state'],
-                                                    values['zip'])
-        address = address.replace('     ', ' ').replace('    ', ' ')
-        name = values['locationName']
+        pollingList = data['pollingLocations']
+        for item in pollingList:
+            if len(ppid) > 0:
+                ppid += ';'
+            if len(name) > 0:
+                name += ';'
+            if len(address) > 0:
+                address += ';'
+            values = item['address']
+            print values
+            line2 = ''
+            line3 = ''
+            if 'line2' in values:
+                line2 = values['line2']
+            if 'line3' in values:
+                line3 = values['line3']
+            address = '{0} {1} {2} {3}, {4} {5}'.format(values['line1'],
+                                                        line2, line3,
+                                                        values['city'],
+                                                        values['state'],
+                                                        values['zip'])
+            address += address.replace('     ', ' ').replace('    ', ' ')
+            name += values['locationName']
     return ppid, address, name
 
 
@@ -53,17 +63,18 @@ def getEVValues(data):
                 hours += ';'
                 name += ';'
             count += 1
+            line1 = addressValues['line1']
             line2 = ''
             line3 = ''
+            city = addressValues['city']
+            state = addressValues['state']
+            zip = addressValues['zip']
             if 'line2' in addressValues:
                 line2 = addressValues['line2']
             if 'line3' in addressValues:
                 line3 = addressValues['line3']
-            address += '{0} {1} {2}, {3} {4}'.format(addressValues['line1'],
-                                                     line2, line3,
-                                                     addressValues['city'],
-                                                     addressValues['state'],
-                                                     addressValues['zip'])
+            address += '{0} {1} {2} {3}, {4} {5}'.format(line1, line2, line3,
+                                                         city, state, zip)
             address = address.replace('     ', ' ').replace('    ', ' ')
             address = address.replace(';', '\;')
             hours += place['pollingHours'].replace(';', '\;')

@@ -15,12 +15,12 @@ DB = os.getenv('PGDB')
 CSRF_ENABLED = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-states = {'AL': 'Alabama',
-          #'AZ': '#Arizona', 'AR': '#Arkansas', 'CA': '#California',
-          #'GA': '#Georgia', 'ID': '#Idaho', 'IN': '#Indiana',
-          #'LA': '#Louisiana', #'ME': '#Maine', 'MA': '#Massachusetts',
-          #'NH': '#New Hampshire', 'SD': '#South Dakota', 'TN': '#Tennessee',
-          #'TX': '#Texas'
+states = {'AL': 'Alabama', 'AR': 'Arkansas',
+          #'AZ': 'Arizona', 'CA': 'California',
+          #'GA': 'Georgia', 'ID': 'Idaho', 'IN': 'Indiana',
+          #'LA': 'Louisiana', #'ME': 'Maine', 'MA': 'Massachusetts',
+          #'NH': 'New Hampshire', 'SD': 'South Dakota', 'TN': 'Tennessee',
+          #'TX': 'Texas'
           }
 
 scope = '''https://spreadsheets.google.com/feeds
