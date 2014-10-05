@@ -15,8 +15,8 @@ DB = os.getenv('PGDB')
 CSRF_ENABLED = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-states = {'AL': 'Alabama', 'AR': 'Arkansas',
-          #'AZ': 'Arizona', 'CA': 'California',
+states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
+          #'CA': 'California',
           #'GA': 'Georgia', 'ID': 'Idaho', 'IN': 'Indiana',
           #'LA': 'Louisiana', #'ME': 'Maine', 'MA': 'Massachusetts',
           #'NH': 'New Hampshire', 'SD': 'South Dakota', 'TN': 'Tennessee',

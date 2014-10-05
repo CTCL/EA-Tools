@@ -28,7 +28,6 @@ def getVIPValues(data):
             if len(address) > 0:
                 address += ';'
             values = item['address']
-            print values
             line2 = ''
             line3 = ''
             if 'line2' in values:
