@@ -34,11 +34,12 @@ def getVIPValues(data):
                 line2 = values['line2']
             if 'line3' in values:
                 line3 = values['line3']
+            zipCode = '{:05d}'.format(int(values['zip']))
             address = '{0} {1} {2} {3}, {4} {5}'.format(values['line1'],
                                                         line2, line3,
                                                         values['city'],
                                                         values['state'],
-                                                        values['zip'])
+                                                        zipCode)
             address += address.replace('     ', ' ').replace('    ', ' ')
             name += values['locationName']
     return ppid, address, name
