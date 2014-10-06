@@ -68,13 +68,13 @@ def getEVValues(data):
             line3 = ''
             city = addressValues['city']
             state = addressValues['state']
-            zip = addressValues['zip']
+            zipCode = '{:05d}'.format(addressValues['zip'])
             if 'line2' in addressValues:
                 line2 = addressValues['line2']
             if 'line3' in addressValues:
                 line3 = addressValues['line3']
             address += '{0} {1} {2} {3}, {4} {5}'.format(line1, line2, line3,
-                                                         city, state, zip)
+                                                         city, state, zipCode)
             address = address.replace('     ', ' ').replace('    ', ' ')
             address = address.replace(';', '\;')
             hours += place['pollingHours'].replace(';', '\;')
