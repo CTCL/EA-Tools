@@ -40,8 +40,9 @@ def getVIPValues(data):
                                                         values['city'],
                                                         values['state'],
                                                         zipCode)
-            address += address.replace('     ', ' ').replace('    ', ' ')
+            address = address.replace('     ', ' ').replace('    ', ' ')
             name += values['locationName']
+            print address
     return ppid, address, name
 
 
