@@ -17,14 +17,14 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
           'NH': 'New Hampshire',
-          #'CA': 'California',
           #'GA': 'Georgia', 'ID': 'Idaho', 'IN': 'Indiana',
           #'LA': 'Louisiana', #'ME': 'Maine', 'MA': 'Massachusetts',
-          #'SD': 'South Dakota', 'TN': 'Tennessee', #'TX': 'Texas'
+          #'SD': 'South Dakota'
           }
 
-scope = '''https://spreadsheets.google.com/feeds
-           https://www.googleapis.com/auth/drive'''
+scope1 = 'https://spreadsheets.google.com/feeds'
+scope2 = 'https://www.googleapis.com/auth/drive'
+scope = '{0} {1}'.format(scope1, scope2)
 redirect = 'http://127.0.0.1:5000/auth_return'
 flow = OAuth2WebServerFlow(client_id=api_id,
                            client_secret=api_secret,
