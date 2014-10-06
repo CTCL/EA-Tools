@@ -38,6 +38,9 @@ class VITQuery(Form):
 
 class runEVQuery(Form):
     choices = []
-    for filename in os.listdir(ev_qa_data):
-        choices.append((filename, filename))
+    try:
+        for filename in os.listdir(ev_qa_data):
+            choices.append((filename, filename))
+    except TypeError:
+        pass
     state = SelectField('state', choices=choices)
