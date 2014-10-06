@@ -27,24 +27,25 @@ def getCounties(soup):
     countySelector = soup.find('select', {'name': 'county'})
     countyOptions = countySelector.find_all('option')
     for county in countyOptions:
-        name = county.text
+        name = county.text.upper().replace('_', ' ')
         code = county.get('value')
         countyDict[name] = code
     return countyDict
 
 
-def generatePayload(county, lastName, dob, hiddenFields, counties):
-    day = dob[6:8]
-    month = dob[4:6]
-    year = dob[:4]
+def generatePayload(county, houseNum, preDir, street, suffix,
+                    postDir, zipCode, hiddenFields, counties):
     payload = {
-        'nameLast': lastName,
-        'county': counties[county.upper().replace('DE KALB', 'DEKALB').replace(
-            'SAINT ', 'ST_').replace(' ', '_')],
-        'dobMonth': month,
-        'dobDay': day,
-        'dobYear': year,
-        'selectSearchCriteria': '1'
+        'selectSearchCriteria': '2',
+        'action': 'Search',
+        'search': 'Search',
+        'county': counties[county.upper()],
+        'houseNumber': houseNum,
+        'streetDirection': preDir,
+        'streetName': street,
+        'streetType': suffix,
+        'streetSuffix': postDir,
+        'zipcode': zipCode
     }
     payload = dict(payload.items() + hiddenFields.items())
     payload['action'] = 'Search'
@@ -88,18 +89,23 @@ def getPollingPlace(soup):
 
 def getValues(row):
     county = row['vf_county_name']
-    lastName = row['tsmart_last_name']
-    dob = row['voterbase_dob']
-    return county, lastName, dob
+    houseNum = row['vf_reg_cass_street_num']
+    preDir = row['vf_reg_cass_pre_directional']
+    street = row['vf_reg_cass_street_name']
+    suffix = row['vf_reg_cass_street_suffix']
+    postDir = row['vf_reg_cass_post_directional']
+    zipCode = row['vf_reg_cass_zip']
+    return county, houseNum, preDir, street, suffix, postDir, zipCode
 
 
 def run(row):
-    county, lastName, dob = getValues(row)
-    baseURL = 'https://myinfo.alabamavotes.gov'
+    county, houseNum, preDir, street, suffix, postDir, zipCode = getValues(row)
+    baseURL = 'https://voter.azsos.gov'
     form = getFormSoup(baseURL + '/VoterView/PollingPlaceSearch.do')
     hiddenFields, action = getHiddenFields(form)
     counties = getCounties(form)
-    payload = generatePayload(county, lastName, dob, hiddenFields, counties)
+    payload = generatePayload(county, houseNum, preDir, street, suffix,
+                              postDir, zipCode, hiddenFields, counties)
     response = getResponseSoup(payload, baseURL + action)
     pollingInfo = getPollingPlace(response)
     return pollingInfo
