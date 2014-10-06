@@ -35,13 +35,15 @@ def getVIPValues(data):
             if 'line3' in values:
                 line3 = values['line3']
             zipCode = '{:05d}'.format(int(values['zip']))
-            address = '{0} {1} {2} {3}, {4} {5}'.format(values['line1'],
-                                                        line2, line3,
-                                                        values['city'],
-                                                        values['state'],
-                                                        zipCode)
-            address = address.replace('     ', ' ').replace('    ', ' ')
+            tempAddress = '{0} {1} {2} {3}, {4} {5}'.format(values['line1'],
+                                                            line2, line3,
+                                                            values['city'],
+                                                            values['state'],
+                                                            zipCode)
+            tempAddress = tempAddress.replace('     ', ' ').replace('    ',
+                                                                    ' ')
             name += values['locationName']
+            address += tempAddress
             print address
     return ppid, address, name
 
@@ -74,10 +76,12 @@ def getEVValues(data):
                 line2 = addressValues['line2']
             if 'line3' in addressValues:
                 line3 = addressValues['line3']
-            address += '{0} {1} {2} {3}, {4} {5}'.format(line1, line2, line3,
-                                                         city, state, zipCode)
-            address = address.replace('     ', ' ').replace('    ', ' ')
-            address = address.replace(';', '\;')
+            tempAddress = '{0} {1} {2} {3}, {4} {5}'.format(line1, line2,
+                                                            line3, city,
+                                                            state, zipCode)
+            temnpAddress = address.replace('     ', ' ').replace('    ', ' ')
+            temnpAddress = temnpAddress.replace(';', '\;')
+            address += tempAddress
             hours += place['pollingHours'].replace(';', '\;')
             startDate += place['startDate'].replace(';', '\;')
             endDate += place['endDate'].replace(';', '\;')
