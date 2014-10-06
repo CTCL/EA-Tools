@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from StringIO import StringIO
 from config import vip_qa_data
 from PIL import Image
-from requests import Session
+import mechanize
 import urllib2
 import re
 import math
@@ -23,51 +23,6 @@ class VectorCompare:
                 topvalue += count * concordance2[word]
         return topvalue / (self.magnitude(concordance1) * self.magnitude(
             concordance2))
-
-
-def getURLandFields(session):
-    headers = {
-        'Cache-Control': 'no-cache',
-        'Origin': 'http://cfs.sos.nh.gov',
-        'X-MicrosoftAjax': 'Delta=true',
-        'User-Agent': '''Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (K
-                         HTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36
-                         '''.replace('\n', '').replace('     ', ''),
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Accept': '*/*',
-        'Accept-Language': 'en-US,en;q=0.8',
-        'Referer': 'http://cfs.sos.nh.gov/app/Public/PollingPlaceSearch.aspx'
-    }
-    searchURL = 'http://cfs.sos.nh.gov/app/Public/PollingPlaceSearch.aspx'
-    request = session.get(searchURL, headers=headers)
-    html = request.text
-    soup = BeautifulSoup(html)
-    link = soup.find('img', {'src': re.compile('Captcha')})
-    src = link.get('src')
-    townDict = {}
-    scr1 = 'ctl00$MainContentPlaceHolder$upnlAbsentee'
-    scr2 = 'ctl00$MainContentPlaceHolder$btnSearch'
-    fields = {
-        '__ASYNCPOST': 'true',
-        '__EVENTARGUMENT': '',
-        '__EVENTTARGET': '',
-        '__LASTFOCUS': '',
-        'ctl00$MainContentPlaceHolder$Search': 'rdoByRegisterVoters',
-        'ctl00$MainContentPlaceHolder$btnSearch:': 'Search',
-        'ctl00$scr': '{0}|{1}'.format(scr1, scr2),
-    }
-
-    for option in soup.find('select',
-                            {'name': 'ctl00$MainContentPlaceHolder$ddlCity'}
-                            ).find_all('option'):
-        text = option.text.lower()
-        townDict[text] = option.get('value')
-    for input in soup.find_all('input', {'type': 'hidden'}):
-        name = input.get('name')
-        value = input.get('value')
-        fields[name] = value
-    url = 'http://cfs.sos.nh.gov/app/Public/' + src
-    return url, fields, townDict, headers
 
 
 def openImage(url):
@@ -159,9 +114,8 @@ def compareToVector(image):
     return imageset
 
 
-def getSecurity(session):
+def getSecurity(url):
     comparison = VectorCompare()
-    url, fields, townDict, headers = getURLandFields(session)
     print url
     first = []
     second = []
@@ -188,36 +142,26 @@ def getSecurity(session):
                                     max(set(third), key=third.count),
                                     max(set(fourth), key=fourth.count),
                                     max(set(fifth), key=fifth.count))
-    fields['ctl00$MainContentPlaceHolder$capObject'] = text
     print text
-    return fields, townDict, headers
+    return text
 
 
 def getValues(row, townDict):
-    #town = row['vf_reg_cass_city'].lower()
-    #this will likely raise key errors. Need to generate and see
-    #townValue = str(townDict[town])
-    #fname = row['tsmart_first_name']
-    #lname = row['tsmart_last_name']
-    #date = row['voterbase_dob']
-    #year = str(int(date[:4]))
-    #month = str(int(date[4:6]))
-    #day = str(int(date[6:8]))
-    townValue = '08101'
-    fname = 'Margaret'
-    lname = 'Hassan'
-    year = '1958'
-    month = '2'
-    day = '27'
-    data = {
-        'ctl00$MainContentPlaceHolder$ddlCity': townValue,
-        'ctl00$MainContentPlaceHolder$txtFirstName': fname,
-        'ctl00$MainContentPlaceHolder$txtLastName': lname,
-        'ctl00$MainContentPlaceHolder$ddlYear': year,
-        'ctl00$MainContentPlaceHolder$ddlMonth': month,
-        'ctl00$MainContentPlaceHolder$ddlDay': day
-    }
-    return data
+    town = row['vf_reg_cass_city'].upper()
+    townValue = str(townDict[town])
+    fname = row['tsmart_first_name']
+    lname = row['tsmart_last_name']
+    date = row['voterbase_dob']
+    return townValue, fname, lname, date
+
+
+def generateTownDict(soup):
+    townDict = {}
+    city = soup.find('select',
+                     {'name': 'ctl00$MainContentPlaceHolder$ddlCity'})
+    for item in city.find_all('option'):
+        townDict[item.text.upper()] = item.get('value')
+    return townDict
 
 
 def getOutputValues(soup):
@@ -230,18 +174,47 @@ def getOutputValues(soup):
     return ppid, name, address
 
 
+def startBrowser():
+    agent1 = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
+    agent2 = '(KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36'
+    agent = 'User-Agent', agent1 + ' ' + agent2
+    br = mechanize.Browser()
+    br.set_handle_robots(False)
+    br.set_handle_refresh(False)
+    br.addheaders = [('User-Agent', agent)]
+    return br
+
+
+def getImageURL(soup):
+    img = soup.find('img', {'src': re.compile('Captcha')})
+    src = img.get('src')
+    url = 'http://cfs.sos.nh.gov/app/Public/' + src
+    return url
+
+
 def run(row):
-    session = Session()
-    securityFields, townDict, headers = getSecurity(session)
-    data = getValues(row, townDict)
-    payload = dict(securityFields.items() + data.items())
     formURL = 'http://cfs.sos.nh.gov/app/Public/PollingPlaceSearch.aspx'
-    resultsURL = 'http://cfs.sos.nh.gov/app/Public/PPSearchResults.aspx'
-    req = session.post(formURL, data=payload, headers=headers)
-    res = session.get(resultsURL, headers=headers)
-    html1 = req.text
-    print res.text
-    soup = BeautifulSoup(html1)
-    with open('/home/michael/Desktop/output.html', 'w') as outFile:
-        outFile.write(str(soup))
-    return getOutputValues(soup)
+    browser = startBrowser()
+    while True:
+        try:
+            response = browser.open(formURL)
+            soup = BeautifulSoup(response.read())
+            imageURL = getImageURL(soup)
+            security = getSecurity(imageURL)
+            townDict = generateTownDict(soup)
+            townValue, fname, lname, date = getValues(row, townDict)
+            browser.select_form("aspnetForm")
+            browser.set_all_readonly(False)
+            baseName = 'ctl00$MainContentPlaceHolder$'
+            browser[baseName + 'ddlCity'] = [townValue]
+            browser[baseName + 'txtFirstName'] = fname
+            browser[baseName + 'txtLastName'] = lname
+            browser[baseName + 'ddlYear'] = [str(int(date[:4]))]
+            browser[baseName + 'ddlMonth'] = [str(int(date[4:6]))]
+            browser[baseName + 'ddlDay'] = [str(int(date[6:8]))]
+            browser[baseName + 'capObject'] = security
+            response = browser.submit(name=baseName + 'btnSearch')
+            soup = response.read()
+            return getOutputValues(soup)
+        except Exception:
+            pass
