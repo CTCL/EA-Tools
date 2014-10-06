@@ -114,15 +114,14 @@ def compareToVector(image):
     return imageset
 
 
-def getSecurity(url):
-    comparison = VectorCompare()
+def getSecurity(url, comparison):
     print url
     first = []
     second = []
     third = []
     fourth = []
     fifth = []
-    for j in range(10):
+    for j in range(7):
         while True:
             image = openImage(url)
             converted = convertImage(image, [22, 16, 59])
@@ -194,13 +193,14 @@ def getImageURL(soup):
 
 def run(row):
     formURL = 'http://cfs.sos.nh.gov/app/Public/PollingPlaceSearch.aspx'
+    comparison = VectorCompare()
     browser = startBrowser()
     while True:
         try:
             response = browser.open(formURL)
             soup = BeautifulSoup(response.read())
             imageURL = getImageURL(soup)
-            security = getSecurity(imageURL)
+            security = getSecurity(imageURL, comparison)
             townDict = generateTownDict(soup)
             townValue, fname, lname, date = getValues(row, townDict)
             browser.select_form("aspnetForm")
@@ -214,7 +214,12 @@ def run(row):
             browser[baseName + 'ddlDay'] = [str(int(date[6:8]))]
             browser[baseName + 'capObject'] = security
             response = browser.submit(name=baseName + 'btnSearch')
-            soup = response.read()
-            return getOutputValues(soup)
+            html = response.read().replace(u'\xa0', ' ').encode('utf-8')
+            if re.search('We cannot locate any voter with', html):
+                return '', '', ''
+            soup = BeautifulSoup(html)
+            pollingInfo = getOutputValues(soup)
+            return pollingInfo
+
         except Exception:
             pass
