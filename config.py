@@ -25,7 +25,7 @@ states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
 scope1 = 'https://spreadsheets.google.com/feeds'
 scope2 = 'https://www.googleapis.com/auth/drive'
 scope = '{0} {1}'.format(scope1, scope2)
-redirect = 'http://127.0.0.1:5000/auth_return'
+redirect = 'ea-tools.neworganizing.com/auth_return'
 flow = OAuth2WebServerFlow(client_id=api_id,
                            client_secret=api_secret,
                            scope=scope,
