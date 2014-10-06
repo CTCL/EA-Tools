@@ -16,7 +16,7 @@ def getRowData(row):
                              row['vf_reg_cass_apt_num'],
                              row['vf_reg_cass_city'],
                              row['vf_reg_cass_state'],
-                             '{:05d}'.format(row['vf_reg_cass_zip']))
+                             '{:05d}'.format(int(row['vf_reg_cass_zip'])))
     address = address.replace('        ', ' ').replace('     ', ' ')
     address = address.replace('    ', ' ')
     county = row['vf_county_name']
