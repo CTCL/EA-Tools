@@ -11,6 +11,7 @@ deccoutputdir = os.getenv('DECCOUTPUT')
 HOST = os.getenv('PGHOST')
 USER = os.getenv('PGUSER')
 DB = os.getenv('DB')
+PASSWORD = os.getenv('PGPASSWORD')
 
 CSRF_ENABLED = True
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -25,7 +26,7 @@ states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
 scope1 = 'https://spreadsheets.google.com/feeds'
 scope2 = 'https://www.googleapis.com/auth/drive'
 scope = '{0} {1}'.format(scope1, scope2)
-redirect = 'http://127.0.0.1:5000/auth_return'
+redirect = os.getenv('AUTH_REDIRECT')
 flow = OAuth2WebServerFlow(client_id=api_id,
                            client_secret=api_secret,
                            scope=scope,
