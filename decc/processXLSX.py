@@ -34,10 +34,11 @@ def processXLSX(inputFile, db, cursor):
     drObject = []
     for i in range(worksheet.ncols):
         headers[i] = worksheet.cell_value(0, i)
-    for j in headers:
+    for i in range(1, worksheet.nrows):
         row = {}
-        for i in range(0, worksheet.nrows):
+        for j in headers:
             row[headers[j]] = worksheet.cell_value(i, j)
+        drObject.append(row)
     headerList = []
     for key in headers:
         headerList.append(headers[key])
@@ -54,7 +55,6 @@ def processXLSX(inputFile, db, cursor):
         break
     for item in drObject:
         batchID = int(item[batchIDfieldName])
-
         item['Batch_Name'] = batchDict[str(batchID)]
         if str(batchID) not in countDict.keys():
             countDict[str(batchID)] = 1
