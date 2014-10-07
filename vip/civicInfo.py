@@ -34,7 +34,7 @@ def getVIPValues(data):
                 line2 = values['line2']
             if 'line3' in values:
                 line3 = values['line3']
-            zipCode = '{:05d}'.format(int(values['zip']))
+            zipCode = values['zip']
             tempAddress = '{0} {1} {2} {3}, {4} {5}'.format(values['line1'],
                                                             line2, line3,
                                                             values['city'],
@@ -71,7 +71,7 @@ def getEVValues(data):
             line3 = ''
             city = addressValues['city']
             state = addressValues['state']
-            zipCode = '{:05d}'.format(addressValues['zip'])
+            zipCode = addressValues['zip']
             if 'line2' in addressValues:
                 line2 = addressValues['line2']
             if 'line3' in addressValues:
