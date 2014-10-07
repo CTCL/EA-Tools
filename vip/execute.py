@@ -32,7 +32,7 @@ def VIP(state, creds):
     for row in stateData:
         address, county = getRowData(row)
         info = getVoterInfo(address)
-        gppid, gname, gaddress = getVIPValues(info)
+        gppid, gaddress, gname = getVIPValues(info)
         sosppid, sosname, sosaddress = eval(state + ".run(row)")
         rowDict = {
             'County': county, 'Address Run': address, 'SOS PP ID': sosppid,
