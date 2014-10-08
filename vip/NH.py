@@ -163,7 +163,6 @@ def getOption(row, soup, name):
     for option in options:
         text = str(option.text)
         value = option.get('value')
-        print city, text
         ratio = Levenshtein.ratio(city, text)
         maximum = max(maximum, ratio)
         optionList.append((ratio, value))
