@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from StringIO import StringIO
 from config import vip_qa_data
 from PIL import Image
+import Levenshtein
 import mechanize
 import urllib2
 import re
@@ -145,22 +146,41 @@ def getSecurity(url, comparison):
     return text
 
 
-def getValues(row, townDict):
-    town = row['vf_reg_cass_city'].upper()
-    townValue = str(townDict[town])
+def getValues(row):
     fname = row['tsmart_first_name']
     lname = row['tsmart_last_name']
     date = row['voterbase_dob']
-    return townValue, fname, lname, date
+    return fname, lname, date
 
 
-def generateTownDict(soup):
-    townDict = {}
-    city = soup.find('select',
-                     {'name': 'ctl00$MainContentPlaceHolder$ddlCity'})
-    for item in city.find_all('option'):
-        townDict[item.text.upper()] = item.get('value')
-    return townDict
+def getOption(row, soup, name):
+    nameBase = 'ctl00$MainContentPlaceHolder$'
+    value = row['vf_reg_cass_city']
+    options = soup.find('select',
+                        {'name': nameBase + name}).find_all('option')
+    optionList = []
+    maximum = 0
+    for option in options:
+        text = option.text
+        value = option.get('value')
+        ratio = Levenshtein.ratio(value, text)
+        maximum = max(maximum, ratio)
+        optionList.append((ratio, value))
+    for item in optionList:
+        if item[0] == maximum:
+            return item[1]
+
+
+def getStreetSeg(num, soup):
+    name = 'ctl00$MainContentPlaceHolder$ddlStreetRang'
+    options = soup.find('select', {'name': name}).find_all('option')
+    numMod = num % 2
+    for option in options:
+        limits = option.text.split('-').replace(' ', '')
+        optMod = int(limits[0]) % 2
+        if optMod == numMod:
+            if num <= int(limits[1]) and num >= int(limits[0]):
+                return option.get('value')
 
 
 def getOutputValues(soup):
@@ -191,6 +211,22 @@ def getImageURL(soup):
     return url
 
 
+def query(browser, townValue, fname, lname, date, security):
+    browser.select_form("aspnetForm")
+    browser.set_all_readonly(False)
+    baseName = 'ctl00$MainContentPlaceHolder$'
+    browser[baseName + 'ddlCity'] = [townValue]
+    browser[baseName + 'txtFirstName'] = fname
+    browser[baseName + 'txtLastName'] = lname
+    browser[baseName + 'ddlYear'] = [str(int(date[:4]))]
+    browser[baseName + 'ddlMonth'] = [str(int(date[4:6]))]
+    browser[baseName + 'ddlDay'] = [str(int(date[6:8]))]
+    browser[baseName + 'capObject'] = security
+    response = browser.submit(name=baseName + 'btnSearch')
+    html = response.read().replace(u'\xa0', ' ').encode('utf-8')
+    return html
+
+
 def run(row):
     formURL = 'http://cfs.sos.nh.gov/app/Public/PollingPlaceSearch.aspx'
     comparison = VectorCompare()
@@ -201,25 +237,14 @@ def run(row):
             soup = BeautifulSoup(response.read())
             imageURL = getImageURL(soup)
             security = getSecurity(imageURL, comparison)
-            townDict = generateTownDict(soup)
-            townValue, fname, lname, date = getValues(row, townDict)
-            browser.select_form("aspnetForm")
-            browser.set_all_readonly(False)
-            baseName = 'ctl00$MainContentPlaceHolder$'
-            browser[baseName + 'ddlCity'] = [townValue]
-            browser[baseName + 'txtFirstName'] = fname
-            browser[baseName + 'txtLastName'] = lname
-            browser[baseName + 'ddlYear'] = [str(int(date[:4]))]
-            browser[baseName + 'ddlMonth'] = [str(int(date[4:6]))]
-            browser[baseName + 'ddlDay'] = [str(int(date[6:8]))]
-            browser[baseName + 'capObject'] = security
-            response = browser.submit(name=baseName + 'btnSearch')
-            html = response.read().replace(u'\xa0', ' ').encode('utf-8')
+            townValue = getOption(row, soup, 'ddlCity')
+            fname, lname, date = getValues(row)
+            html = query(browser, townValue, fname, lname, date, security)
             if re.search('We cannot locate any voter with', html):
                 return '', '', ''
             soup = BeautifulSoup(html)
             pollingInfo = getOutputValues(soup)
             return pollingInfo
-
-        except Exception:
-            pass
+        except Exception as inst:
+            print type(inst)
+            print inst
