@@ -30,11 +30,13 @@ def getVIPValues(data):
             values = item['address']
             line2 = ''
             line3 = ''
+            zipCode = ''
             if 'line2' in values:
                 line2 = values['line2']
             if 'line3' in values:
                 line3 = values['line3']
-            zipCode = values['zip']
+            if 'zip' in values:
+                zipCode = values['zip']
             tempAddress = '{0} {1} {2} {3}, {4} {5}'.format(values['line1'],
                                                             line2, line3,
                                                             values['city'],

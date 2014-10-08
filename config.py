@@ -16,7 +16,7 @@ CSRF_ENABLED = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
-          'NH': 'New Hampshire',
+          'NH': 'New Hampshire', 'TN': 'Tennessee'
           #'GA': 'Georgia', 'ID': 'Idaho', 'IN': 'Indiana',
           #'LA': 'Louisiana', #'ME': 'Maine', 'MA': 'Massachusetts',
           #'SD': 'South Dakota'
