@@ -164,6 +164,9 @@ def getOption(row, soup, name):
     for option in options:
         text = str(option.text)
         value = str(option.get('value'))
+        if city == text:
+            print text
+            return value
         ratio = Levenshtein.ratio(city, text)
         maximum = max(maximum, ratio)
         optionList.append((ratio, value))
@@ -217,6 +220,7 @@ def query(browser, townValue, fname, lname, date, security):
     browser.select_form("aspnetForm")
     browser.set_all_readonly(False)
     baseName = 'ctl00$MainContentPlaceHolder$'
+    print townValue, fname, lname, date
     browser[baseName + 'ddlCity'] = [townValue]
     browser[baseName + 'txtFirstName'] = fname
     browser[baseName + 'txtLastName'] = lname
