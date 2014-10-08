@@ -155,15 +155,16 @@ def getValues(row):
 
 def getOption(row, soup, name):
     nameBase = 'ctl00$MainContentPlaceHolder$'
-    value = row['vf_reg_cass_city']
+    city = str(row['vf_reg_cass_city'])
     options = soup.find('select',
                         {'name': nameBase + name}).find_all('option')
     optionList = []
     maximum = 0
     for option in options:
-        text = option.text
+        text = str(option.text)
         value = option.get('value')
-        ratio = Levenshtein.ratio(value, text)
+        print city, text
+        ratio = Levenshtein.ratio(city, text)
         maximum = max(maximum, ratio)
         optionList.append((ratio, value))
     for item in optionList:
