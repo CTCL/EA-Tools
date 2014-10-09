@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 from requests import Session
-import json
 
 
 def getValues(row):
@@ -48,8 +47,6 @@ def query(session, fname, lname, zipCode, fields, formURL):
     fields[baseName + 'txtLastName'] = lname
     fields[baseName + 'txtZIPCode'] = zipCode
     fields[baseName + 'btnSubmit'] = 'Submit'
-    with open('/home/michael/Desktop/output.json', 'w') as outFile:
-        outFile.write(json.dumps(fields, indent=2))
     response = session.post(formURL, data=fields)
     html = response.text.replace(u'\xa0', ' ').encode('utf-8')
     return html
@@ -65,8 +62,6 @@ def run(row):
             response = session.get(formURL)
             hiddenFields = getHiddenValues(BeautifulSoup(response.text))
             html = query(session, fname, lname, zipCode, hiddenFields, formURL)
-            with open('/home/michael/Desktop/output.html', 'w') as outFile:
-                outFile.write(html)
             soup = BeautifulSoup(html)
             pollingInfo = getOutputValues(soup)
             return pollingInfo
