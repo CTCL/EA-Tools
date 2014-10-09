@@ -17,9 +17,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
           'NH': 'New Hampshire', 'TN': 'Tennessee', 'LA': 'Louisiana',
+          'ME': 'Maine',
           #'GA': 'Georgia', 'ID': 'Idaho', 'IN': 'Indiana',
-          # #'ME': 'Maine', 'MA': 'Massachusetts',
-          #'SD': 'South Dakota'
+          #MA': 'Massachusetts', 'SD': 'South Dakota'
           }
 
 scope1 = 'https://spreadsheets.google.com/feeds'
