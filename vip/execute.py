@@ -40,7 +40,12 @@ def VIP(state, creds):
             'Google PP ID': gppid, 'Google PP Name': gname,
             'Google PP Address': gaddress
         }
-        sheets.writeRow(rowDict, client, sheet['id'])
+        while True:
+            try:
+                sheets.writeRow(rowDict, client, sheet['id'])
+                break
+            except Exception:
+                pass
     return sheet['id']
 
 
@@ -60,5 +65,10 @@ def EVIP(state, creds, half=True):
                 'Google PP Start Date': gstart, 'Google PP End Date': gend,
                 'Google PP Time': gtime
             }
-            sheets.writeRow(rowDict, client, sheet['id'])
+            while True:
+                try:
+                    sheets.writeRow(rowDict, client, sheet['id'])
+                    break
+                except Exception:
+                    pass
     return sheet['id']
