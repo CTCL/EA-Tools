@@ -84,7 +84,8 @@ def getEVValues(data):
             temnpAddress = address.replace('     ', ' ').replace('    ', ' ')
             temnpAddress = temnpAddress.replace(';', '\;')
             address += tempAddress
-            hours += place['pollingHours'].replace(';', '\;')
+            if 'pollingHours' in place:
+                hours += place['pollingHours'].replace(';', '\;')
             startDate += place['startDate'].replace(';', '\;')
             endDate += place['endDate'].replace(';', '\;')
             name += place['name']
