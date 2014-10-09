@@ -4,13 +4,6 @@ import Levenshtein
 import json
 
 
-def getResponseSoup(payload, action, session):
-    baseURL = 'http://web.go-vote-tn.tnsos.net/'
-    response = session.post(baseURL + action, data=payload, verify=False)
-    soup = BeautifulSoup(response.text)
-    return soup
-
-
 def getPollingPlace(soup):
     ppid = ''
     address = ''
