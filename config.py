@@ -17,8 +17,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
           'NH': 'New Hampshire', 'TN': 'Tennessee', 'LA': 'Louisiana',
-          'ME': 'Maine', 'IL': 'Illinois',
-          #'GA': 'Georgia', 'ID': 'Idaho', 'IN': 'Indiana',
+          'ME': 'Maine', 'IL': 'Illinois', 'IN': 'Indiana',
+          #'GA': 'Georgia', 'ID': 'Idaho',
           #MA': 'Massachusetts', 'SD': 'South Dakota'
           }
 
