@@ -11,7 +11,6 @@ def getPollingPlace(soup):
     mapURL = soup.find('a', {'href': re.compile('gmaps')}).get('href')
     args = mapURL.split('?')[1].split('&')
     for item in args:
-        print item
         kwargs = item.split('=')
         if kwargs[0] == 'address':
             address = kwargs[1]
