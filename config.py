@@ -10,7 +10,7 @@ deccinputdir = os.getenv('DECCINPUT')
 deccoutputdir = os.getenv('DECCOUTPUT')
 HOST = os.getenv('PGHOST')
 USER = os.getenv('PGUSER')
-DB = os.getenv('DB')
+DB = os.getenv('PGDB')
 PASSWORD = os.getenv('PGPASSWORD')
 
 CSRF_ENABLED = True
