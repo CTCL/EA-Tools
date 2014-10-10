@@ -44,7 +44,8 @@ def getVIPValues(data):
                                                             zipCode)
             tempAddress = tempAddress.replace('     ', ' ').replace('    ',
                                                                     ' ')
-            name += values['locationName']
+            if 'locationName' in values:
+                name += values['locationName']
             address += tempAddress
             print address
     return ppid, address, name
