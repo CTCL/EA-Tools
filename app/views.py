@@ -1,5 +1,5 @@
 from flask import render_template, flash, redirect, request, url_for
-from config import HOST, DB, USER, deccinputdir, deccoutputdir, flow
+from config import HOST, DB, USER, PASSWORD, deccinputdir, deccoutputdir, flow
 from vip.execute import VIP, EVIP
 from vip import civicInfo
 from forms import SelectProgram, optionSelector, orderSubmission
@@ -81,7 +81,7 @@ def deccSelect():
 
 @app.route('/decc/scanstep1', methods=['GET', 'POST'])
 def scanOne():
-    cursor, db = decc.processScans.getCursor(HOST, DB, USER)
+    cursor, db = decc.processScans.getCursor(HOST, DB, USER, PASSWORD)
     clients = decc.processScans.findClients(cursor)
     db.close()
     form = optionSelector()
@@ -101,7 +101,7 @@ def scanOne():
 @app.route('/decc/scanstep2', methods=['GET', 'POST'])
 def scanTwo():
     client = request.args['client']
-    cursor, db = decc.processScans.getCursor(HOST, DB, USER)
+    cursor, db = decc.processScans.getCursor(HOST, DB, USER, PASSWORD)
     project = decc.processScans.getProject(client, cursor)
     orders = decc.processScans.findOrders(project, cursor)
     form = optionSelector()
@@ -133,7 +133,7 @@ def scanTwo():
 
 @app.route('/decc/scanstep3', methods=['GET', 'POST'])
 def scanThree():
-    cursor, db = decc.processScans.getCursor(HOST, DB, USER)
+    cursor, db = decc.processScans.getCursor(HOST, DB, USER, PASSWORD)
     client = request.args['client']
     project = request.args['project']
     order = request.args['order']
@@ -168,7 +168,7 @@ def scanThree():
 
 @app.route('/decc/scanform')
 def processScans():
-    cursor, db = decc.processScans.getCursor(HOST, DB, USER)
+    cursor, db = decc.processScans.getCursor(HOST, DB, USER, PASSWORD)
     client = request.args['client']
     order = request.args['order']
     formType = request.args['formType']
@@ -210,7 +210,7 @@ def checkProcessing():
 
 @app.route('/decc/shipstep1', methods=['GET', 'POST'])
 def shipOne():
-    cursor, db = decc.processScans.getCursor(HOST, DB, USER)
+    cursor, db = decc.processScans.getCursor(HOST, DB, USER, PASSWORD)
     clients = decc.processScans.findClients(cursor)
     db.close()
     form = optionSelector()
@@ -231,7 +231,7 @@ def shipOne():
 @app.route('/decc/shipstep2', methods=['GET', 'POST'])
 def shipTwo():
     client = request.args['client']
-    cursor, db = decc.processScans.getCursor(HOST, DB, USER)
+    cursor, db = decc.processScans.getCursor(HOST, DB, USER, PASSWORD)
     project = decc.processScans.getProject(client, cursor)
     orders = decc.processScans.findOrders(project, cursor)
     form = optionSelector()
@@ -263,7 +263,7 @@ def shipTwo():
 
 @app.route('/decc/shipstep3', methods=['GET', 'POST'])
 def shipThree():
-    cursor, db = decc.processScans.getCursor(HOST, DB, USER)
+    cursor, db = decc.processScans.getCursor(HOST, DB, USER, PASSWORD)
     client = request.args['client']
     project = request.args['project']
     order = request.args['order']
@@ -293,7 +293,7 @@ def shipThree():
 
 @app.route('/decc/shipform')
 def processShipment():
-    cursor, db = decc.processScans.getCursor(HOST, DB, USER)
+    cursor, db = decc.processScans.getCursor(HOST, DB, USER, PASSWORD)
     client = request.args['client']
     order = request.args['order']
     formType = request.args['formType']

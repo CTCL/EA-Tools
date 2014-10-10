@@ -1,5 +1,5 @@
 from csv import DictWriter
-from config import HOST, DB, USER
+from config import HOST, DB, USER, PASSWORD
 import vrqc
 import xlrd
 import re
@@ -89,7 +89,7 @@ def main(vr, inFile, outFile):
         'QC_I', 'IC', 'ICS', 'ICZ', 'IMS', 'IMZ', 'IPS', 'IPZ', 'ECS', 'EMS',
         'EPS', 'CIS', 'CZIS', 'MZIS', 'PZIS', 'CZIC'
     ]
-    db = psycopg2.connect(host=HOST, database=DB, user=USER)
+    db = psycopg2.connect(host=HOST, database=DB, user=USER, password=PASSWORD)
     cursor = db.cursor()
     dictList, headerList = processXLSX(inFile, db, cursor)
     if vr:
