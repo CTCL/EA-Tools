@@ -21,7 +21,6 @@ def getValues(row):
 
 
 def getOutputValues(soup):
-    print 'woot'
     ppid = ''
     name = ''
     address = ''
@@ -50,7 +49,6 @@ def matchStreet(streetStr, soup):
         maximum = max(maximum, ratio)
     for option in optionList:
         if option[1] == maximum:
-            print option
             return option[0]
 
 
