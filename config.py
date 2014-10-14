@@ -15,10 +15,10 @@ DB = os.getenv('DB')
 CSRF_ENABLED = True
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona',
+states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona', 'ME': 'Maine',
           'NH': 'New Hampshire', 'TN': 'Tennessee', 'LA': 'Louisiana',
-          'ME': 'Maine', 'IL': 'Illinois', 'IN': 'Indiana',
-          #'GA': 'Georgia', 'ID': 'Idaho',
+          'IL': 'Illinois', 'IN': 'Indiana', 'ID': 'Idaho',
+          #'GA': 'Georgia',
           #MA': 'Massachusetts', 'SD': 'South Dakota'
           }
 
