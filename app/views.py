@@ -325,9 +325,12 @@ def returned():
         inFile = deccinputdir + form.inFileName.data
         outFile = deccoutputdir + form.outFileName.data + '.csv'
         isVR = form.isVR.data
-        decc.processXLSX.main(isVR, inFile, outFile)
-        flash('File output')
-        return redirect('/decc')
+        try:
+            decc.processXLSX.main(isVR, inFile, outFile)
+            flash('File output')
+            return redirect('/decc')
+        except UnicodeError as error:
+            flash('Error: ' + str(error))
     return render_template('deccReturned.html',
                            form=form)
 
