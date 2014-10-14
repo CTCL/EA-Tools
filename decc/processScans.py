@@ -168,7 +168,7 @@ def processPhysical(PATH, outputPATH, partID, startNum, db, cursor):
             output.writerow(row)
 
 
-def getCursor(HOST, DB, USER):
-    db = psycopg2.connect(host=HOST, database=DB, user=USER)
+def getCursor(HOST, DB, USER, PASSWORD):
+    db = psycopg2.connect(host=HOST, database=DB, user=USER, password=PASSWORD)
     cursor = db.cursor()
     return cursor, db
