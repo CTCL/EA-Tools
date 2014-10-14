@@ -63,8 +63,6 @@ def query(session, county, num, name, addrStr, fields, formURL):
     action = 'WhereDoIVote.aspx'
     response = session.post(formURL + action, data=fields)
     html = response.text
-    with open('/home/michael/Desktop/output1.html', 'w') as outFile:
-        outFile.write(html)
     soup = BeautifulSoup(html, 'lxml')
     street = matchStreet(addrStr, soup)
     fields = getHiddenValues(soup)
@@ -74,13 +72,8 @@ def query(session, county, num, name, addrStr, fields, formURL):
     headers = {'Cache-Control': 'max-age=0',
                'Origin': 'http://idahovotes.gov'}
     action = soup.find('form').get('action')
-    print 'action is', action
-    print fields
-    print session.cookies
     response = session.post(formURL + action, data=fields, headers=headers)
-    print response.history
     html = response.text
-    print response.url
     return html
 
 
@@ -95,8 +88,6 @@ def run(row):
             hiddenFields = getHiddenValues(BeautifulSoup(html, 'lxml'))
             html = query(session, county, num, name, addrStr,
                          hiddenFields, formURL)
-            with open('/home/michael/Desktop/output.html', 'w') as outFile:
-                outFile.write(html)
             soup = BeautifulSoup(html, 'lxml')
             pollingInfo = getOutputValues(soup)
             return pollingInfo
