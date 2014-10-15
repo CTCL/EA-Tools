@@ -6,7 +6,7 @@ import re
 def getValues(row):
     fname = row['tsmart_first_name']
     lname = row['tsmart_last_name']
-    date = row['vf_dob']
+    date = row['voterbase_dob']
     dob = '{0}/{1}/{2}'.format(date[4:6], date[6:8], date[:4])
     return fname, lname, dob
 
