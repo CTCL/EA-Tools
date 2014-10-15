@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 from requests import Session
-import Levenshtein
 import json
 
 
@@ -37,21 +36,6 @@ def getHiddenValues(soup):
     for item in form.find_all('input', {'type': 'hidden'}):
         fields[item.get('name')] = item.get('value')
     return fields
-
-
-def matchStreet(streetStr, soup):
-    print streetStr
-    options = soup.find('select').find_all('option')
-    optionList = []
-    maximum = 0
-    for option in options:
-        value = option.get('value').upper()
-        ratio = Levenshtein.ratio(value, streetStr)
-        optionList.append((value, ratio))
-        maximum = max(maximum, ratio)
-    for option in optionList:
-        if option[1] == maximum:
-            return option[0]
 
 
 def query(session, num, name, suffix, zipCode, fields, formURL):
