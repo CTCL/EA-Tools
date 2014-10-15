@@ -80,8 +80,6 @@ def query(finit, lname, county, dob, fields, formURL, session):
     fields[nameBase + 'txtZip'] = ''
     response = session.post(formURL, data=fields)
     html = response.text.encode('windows-1252')
-    with open('/home/michael/Desktop/output.html', 'w') as outFile:
-        outFile.write(html)
     return html
 
 
