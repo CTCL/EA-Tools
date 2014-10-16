@@ -18,12 +18,22 @@ def getOutputValues(soup):
     zipCode = ''
     IDBase = 'ctl00_ContentPlaceHolder1_registrationLookup_lblPollingPlace'
     name = soup.find('span', {'id': IDBase + 'Name'}).string
-    street1 = soup.find('span', {'id': IDBase + 'AddressLine1'}).string
-    street2Soup = soup.find('span', {'id': IDBase + 'AddressLine2'})
-    if street2Soup is not None:
-        street2 = street2Soup.text
-    city = soup.find('span', {'id': IDBase + 'AddressCity'}).string
-    zipCode = soup.find('span', {'id': IDBase + 'AddressZipCode'}).string
+    street1tag = soup.find('span', {'id': IDBase + 'AddressLine1'})
+    street2tag = soup.find('span', {'id': IDBase + 'AddressLine2'})
+    citytag = soup.find('span', {'id': IDBase + 'AddressCity'})
+    ziptag = soup.find('span', {'id': IDBase + 'AddressZipCode'})
+    street1 = ''
+    street2 = ''
+    city = ''
+    zipCode = ''
+    if street1tag is not None:
+        street1 = street1tag.string
+    if street2tag is not None:
+        street2 = street2tag.string
+    if citytag is not None:
+        city = citytag.string
+    if ziptag is not None:
+        zipCode = ziptag.string
     address = '{0} {1} {2}, IL {3}'.format(street1.strip(), street2.strip(),
                                            city.strip(), zipCode)
     return ppid, name, address
