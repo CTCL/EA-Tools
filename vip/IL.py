@@ -1,12 +1,16 @@
 from bs4 import BeautifulSoup
 from requests import Session
+import re
 
 
 def getValues(row):
     fname = row['tsmart_first_name']
     lname = row['tsmart_last_name']
     zipCode = row['vf_reg_cass_zip']
-    return fname, lname, zipCode
+    dobStr = row['voterbase_dob']
+    dob = '{0}/{1}/{2}'.format(int(dobStr[4:6]), int(dobStr[6:8]),
+                               int(dobStr[:4]))
+    return fname, lname, zipCode, dob
 
 
 def getOutputValues(soup):
@@ -51,7 +55,7 @@ def getHiddenValues(soup):
     return fields
 
 
-def query(session, fname, lname, zipCode, fields, formURL):
+def query(session, fname, lname, zipCode, fields, dob, formURL):
     baseName = 'ctl00$ContentPlaceHolder1$registrationLookup$'
     fields[baseName + 'txtFirstName'] = fname
     fields[baseName + 'txtLastName'] = lname
@@ -59,6 +63,13 @@ def query(session, fname, lname, zipCode, fields, formURL):
     fields[baseName + 'btnSubmit'] = 'Submit'
     response = session.post(formURL, data=fields)
     html = response.text.replace(u'\xa0', ' ').encode('utf-8')
+    if re.search("We've found multiple voters with your name and ZIP code",
+                 html):
+        fields = getHiddenValues(BeautifulSoup(response.text))
+        fields[baseName + 'txtBirthDate'] = dob
+        fields[baseName + 'btnSubmit'] = 'Submit'
+        response = session.post(formURL, data=fields)
+        html = response.text
     return html
 
 
@@ -68,10 +79,11 @@ def run(row):
     session = Session()
     while True:
         try:
-            fname, lname, zipCode = getValues(row)
+            fname, lname, zipCode, dob = getValues(row)
             response = session.get(formURL)
             hiddenFields = getHiddenValues(BeautifulSoup(response.text))
-            html = query(session, fname, lname, zipCode, hiddenFields, formURL)
+            html = query(session, fname, lname, zipCode,
+                         hiddenFields, dob, formURL)
             soup = BeautifulSoup(html)
             pollingInfo = getOutputValues(soup)
             return pollingInfo
