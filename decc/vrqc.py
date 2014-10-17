@@ -87,8 +87,6 @@ def inspectRows(regData, zipTranslator, stateDict):
         #Check whether values for State and Zip
         #(current, previous, mailing) are included
         #Ex:'ICS' translates to 'Includes Current Statfilee'
-        if 'CurrentState' not in row:
-            raise Exception('No CurrentState Field included in file')
         cstate = row['CurrentState']
         row['ICS'] = cstate != '' and cstate is not None
         if row['ICS']:

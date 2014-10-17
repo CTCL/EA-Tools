@@ -308,7 +308,7 @@ def processShipment():
     try:
         decc.processScans.processPhysical(deccinputdir + 'input.csv',
                                           deccoutputdir + 'output.csv', part,
-                                          startNum, db, cursor)
+                                          startNum, db, cursor, order)
         flash('Processing shipment complete', 'message')
         db.close()
     except IOError:

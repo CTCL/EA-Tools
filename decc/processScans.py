@@ -140,7 +140,7 @@ def processPDF(PATH, outputPATH, startNum, partID, cursor, db):
     return endNum, totalPages
 
 
-def processPhysical(PATH, outputPATH, partID, startNum, db, cursor):
+def processPhysical(PATH, outputPATH, partID, startNum, db, cursor, order):
     dictList = []
     ID = int(startNum)
     with open(PATH, 'r') as file:
@@ -156,6 +156,9 @@ def processPhysical(PATH, outputPATH, partID, startNum, db, cursor):
                               VALUES ('{0}', '{0}', '{1}', current_date,
                               current_date, {2}, '{1}');
                               '''.format(ID, item['Batch Name'], partID))
+            cursor.execute('''UPDATE decc_form_order
+                              SET digital = FALSE
+                              WHERE id = {0}'''.format(order))
             db.commit()
             rowInfo['Batch ID'] = "%010d" % ID
             dictList.append(rowInfo)
