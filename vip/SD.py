@@ -15,22 +15,27 @@ def getOutputValues(soup):
     ppid = ''
     name = ''
     address = ''
-    span = str(soup.find('span',
-                         {'id': 'ctl00_MainContent_lblVoteCenters'}))
-    locationList = re.sub('</?span.*?>', '', span).split('<br/>')
-    locationList = locationList[0:len(locationList) - 1]
-    for location in locationList:
-        if len(name) > 0:
-            name += ';'
-        if len(address) > 0:
-            address += ';'
-        if len(ppid) > 0:
-            ppid += ';'
-        pollList = location.split(',')
-        city = re.sub('\\(.*$', '', pollList[2]).strip()
-        ppid += re.sub('\\((.*)\\)', '\\1', pollList[2]).strip()
-        name += pollList[0].strip()
-        address += '{0} {1}, SD'.format(pollList[1].strip(), city)
+    span = soup.find('span', {'id': 'ctl00_MainContent_lblVoteCenters'})
+    if span is not None:
+        span = str(span)
+        locationList = re.sub('</?span.*?>', '', span).split('<br/>')
+        locationList = locationList[0:len(locationList) - 1]
+        for location in locationList:
+            if len(name) > 0:
+                name += ';'
+            if len(address) > 0:
+                address += ';'
+            if len(ppid) > 0:
+                ppid += ';'
+            pollList = location.split(',')
+            city = re.sub('\\(.*$', '', pollList[2]).strip()
+            ppid += re.sub('\\((.*)\\)', '\\1', pollList[2]).strip()
+            name += pollList[0].strip()
+            address += '{0} {1}, SD'.format(pollList[1].strip(), city)
+    else:
+        name = soup.find('span', {'id': 'ctl00_MainContent_lblShowName'}).string
+        address = soup.find('span', {'id': 'ctl00_MainContent_lblShowAddress'}).string
+        ppid = soup.find('span', {'id': 'ctl00_MainContent_lblShowPrecinct'}).string
     return ppid, name, address
 
 
