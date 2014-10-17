@@ -115,7 +115,7 @@ def scanTwo():
             decc.processScans.createOrder(project, cursor)
             db.commit()
             db.close()
-            flash('Order created')
+            flash('Order created', 'message')
             return redirect(url_for('.scanTwo',
                                     client=client))
         else:
@@ -185,7 +185,7 @@ def processScans():
                                                       deccoutputdir, startNum,
                                                       part, cursor, db)
     db.close()
-    flash('Processing part complete')
+    flash('Processing part complete', 'message')
     return redirect(url_for('.email',
                             typeName=typeName,
                             startNum=startNum,
@@ -245,7 +245,7 @@ def shipTwo():
             decc.processScans.createOrder(project, cursor)
             db.commit()
             db.close()
-            flash('Order created')
+            flash('Order created', 'message')
             return redirect(url_for('.scanTwo',
                                     client=client))
         else:
@@ -305,11 +305,15 @@ def processShipment():
     part = decc.processScans.createPart(order, formType, state, rush, van,
                                         match, quad, cursor, db)
     startNum = decc.processScans.obtainStartNum(client, cursor)
-    decc.processScans.processPhysical(deccinputdir + 'input.csv',
-                                      deccoutputdir + 'output.csv', part,
-                                      startNum, db, cursor)
-    db.close()
-    flash('Processing shipment complete')
+    try:
+        decc.processScans.processPhysical(deccinputdir + 'input.csv',
+                                          deccoutputdir + 'output.csv', part,
+                                          startNum, db, cursor)
+        flash('Processing shipment complete', 'message')
+        db.close()
+    except IOError:
+        db.close()
+        flash('Error reading/writing file', 'error')
     return redirect('/decc')
 
 
@@ -327,10 +331,12 @@ def returned():
         isVR = form.isVR.data
         try:
             decc.processXLSX.main(isVR, inFile, outFile)
-            flash('File output')
+            flash('File output', 'message')
             return redirect('/decc')
-        except UnicodeError as error:
-            flash('Error: ' + str(error))
+        except (UnicodeError, KeyError) as error:
+            flash('Error: ' + str(error), 'error')
+        except IOError:
+            flash('Error reading/writing file', 'error')
     return render_template('deccReturned.html',
                            form=form)
 

@@ -5,13 +5,22 @@
     {% else %}
     <title>EA Tools</title>
     {% endif %}
+    {% with errors = get_flashed_messages(category_filter=["error"]) %}
+    {% if errors %}
+    <script language="javascript">
+    {% for error in errors %}
+      alert('{{ error }}')
+    {% endfor %}
+    </script>
+    {% endif %}
+    {% endwith %}
   </head>
   <body>
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(category_filter=["message"]) %}
     {% if messages %}
     <ul>
     {% for message in messages %}
-        <li>{{ message }} </li>
+    <li>{{ message }} </li>
     {% endfor %}
     </ul>
     {% endif %}
