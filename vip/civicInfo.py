@@ -82,8 +82,9 @@ def getEVValues(data):
             tempAddress = '{0} {1} {2} {3}, {4} {5}'.format(line1, line2,
                                                             line3, city,
                                                             state, zipCode)
-            temnpAddress = address.replace('     ', ' ').replace('    ', ' ')
-            temnpAddress = temnpAddress.replace(';', '\;')
+            tempAddress = tempAddress.replace('     ',
+                                              ' ').replace('    ', ' ')
+            tempAddress = tempAddress.replace(';', '\;')
             address += tempAddress
             if 'pollingHours' in place:
                 hours += place['pollingHours'].replace(';', '\;')
