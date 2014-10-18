@@ -11,7 +11,7 @@ def getVoterInfo(address, electionID=4100):
         payload['electionId'] = electionID
     r = requests.get('https://www.googleapis.com/civicinfo/v2/voterinfo',
                      params=payload)
-    return json.loads(r.text.replace('\u200b', '').replace(u'\xa0', ' '))
+    return json.loads(r.text)
 
 
 def getVIPValues(data):
@@ -85,12 +85,10 @@ def getEVValues(data):
             tempAddress = tempAddress.replace('     ',
                                               ' ').replace('    ', ' ')
             tempAddress = tempAddress.replace(';', '\;')
-            print tempAddress
             address += tempAddress
             if 'pollingHours' in place:
                 hours += place['pollingHours'].replace(';', '\;')
             startDate += place['startDate'].replace(';', '\;')
             endDate += place['endDate'].replace(';', '\;')
             name += place['name']
-    print 'finished', name
     return name, address, startDate, endDate, hours
