@@ -1,0 +1,2 @@
+def run(row):
+  return '', '', ''
