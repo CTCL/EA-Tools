@@ -42,8 +42,8 @@ def getVIPValues(data):
                                                             values['city'],
                                                             values['state'],
                                                             zipCode)
-            tempAddress = tempAddress.replace('     ', ' ').replace('    ',
-                                                                    ' ')
+            tempAddress = tempAddress.replace('     ', ' ')
+            tempAddress = tempAddress.replace('    ', ' ').replace(';', '.')
             if 'locationName' in values:
                 name += values['locationName']
             address += tempAddress
@@ -82,9 +82,8 @@ def getEVValues(data):
             tempAddress = '{0} {1} {2} {3}, {4} {5}'.format(line1, line2,
                                                             line3, city,
                                                             state, zipCode)
-            tempAddress = tempAddress.replace('     ',
-                                              ' ').replace('    ', ' ')
-            tempAddress = tempAddress.replace(';', '\;')
+            tempAddress = tempAddress.replace('     ', ' ')
+            tempAddress = tempAddress.replace('    ', ' ').replace(';', '.')
             address += tempAddress
             if 'pollingHours' in place:
                 hours += place['pollingHours'].replace(';', '\;')
