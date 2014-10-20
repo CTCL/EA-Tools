@@ -10,8 +10,9 @@ def geocode(address):
     response = requests.get(uri, params=payload)
     data = json.loads(response.text)
     results = data['results']
-    location = results[0]['geometry']['location']
-    return location
+    if len(results) > 0:
+        location = results[0]['geometry']['location']
+        return location
 
 
 def haversine(location1, location2):
