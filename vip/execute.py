@@ -3,6 +3,7 @@ from civicInfo import getVoterInfo, getVIPValues, getEVValues
 from config import vipTemplateKey, evTemplateKey
 from config import vip_qa_data, ev_qa_data
 import sheets
+import geocode
 
 
 def getRowData(row):
@@ -40,6 +41,13 @@ def VIP(state, creds):
             'Google PP ID': gppid, 'Google PP Name': gname,
             'Google PP Address': gaddress
         }
+        glocation = geocode.geocode(gaddress)
+        soslocation = geocode.geocode(sosaddress)
+        if glocation is not None and soslocation is not None:
+            distance = geocode.haversine(glocation, soslocation)
+            rowDict['SOS Location'] = soslocation
+            rowDict['Google Location'] = glocation
+            rowDict['Distance'] = distance
         while True:
             try:
                 sheets.writeRow(rowDict, client, sheet['id'])
