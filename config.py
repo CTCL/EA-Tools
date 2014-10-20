@@ -4,6 +4,7 @@ import os
 api_id = os.getenv('GOOGLE_NATIVE_APP_CLIENT_ID')
 api_secret = os.getenv('GOOGLE_NATIVE_APP_CLIENT_SECRET')
 api_key = os.getenv('GOOGLE_PUBLIC_API_KEY')
+geokey = os.getenv('GOOGLE_GEOCODE_API_KEY')
 vip_qa_data = os.getenv('VIPQADATA')
 ev_qa_data = os.getenv('EVIPQADATA')
 deccinputdir = os.getenv('DECCINPUT')
