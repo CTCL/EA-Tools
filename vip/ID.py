@@ -38,7 +38,6 @@ def getHiddenValues(soup):
 
 
 def matchStreet(streetStr, soup):
-    print streetStr
     options = soup.find('select').find_all('option')
     optionList = []
     maximum = 0
@@ -77,9 +76,9 @@ def query(session, county, num, name, addrStr, fields, formURL):
 
 def run(row):
     formURL = 'http://www.idahovotes.gov/YourPollingPlace/'
-    session = Session()
     while True:
         try:
+            session = Session()
             county, num, name, addrStr = getValues(row)
             response = session.get(formURL + 'WhereDoIVote.aspx')
             html = response.text
@@ -92,4 +91,3 @@ def run(row):
         except Exception as inst:
             print type(inst)
             print inst
-            return '', '', ''
