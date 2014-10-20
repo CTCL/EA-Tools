@@ -45,9 +45,9 @@ def VIP(state, creds):
         soslocation = geocode.geocode(sosaddress)
         if glocation is not None and soslocation is not None:
             distance = geocode.haversine(glocation, soslocation)
-            rowDict['SOS Location'] = soslocation
-            rowDict['Google Location'] = glocation
-            rowDict['Distance'] = distance
+            rowDict['SOS Location'] = str(soslocation)
+            rowDict['Google Location'] = str(glocation)
+            rowDict['Distance'] = str(distance)
         while True:
             try:
                 sheets.writeRow(rowDict, client, sheet['id'])
