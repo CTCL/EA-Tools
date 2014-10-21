@@ -39,7 +39,6 @@ def matchString(string, stringList):
     optionList = []
     for text in stringList:
         score = Levenshtein.ratio(string, text)
-        print text, score
         maximum = max(maximum, score)
         optionList.append((score, text))
     for option in optionList:
