@@ -17,13 +17,6 @@ def getValues(row):
     return num, predir, name, suffix, postdir, city, zipcode, county
 
 
-def getOutputValues(soup):
-    ppid = ''
-    name = ''
-    address = ''
-    return ppid, name, address
-
-
 def getHiddenValues(form):
     fields = {}
     for item in form.find_all('input', {'type': 'hidden'}):
@@ -93,7 +86,7 @@ def precinctFinder(url, num, predir, name, suffix, postdir, city, zipcode, eid):
     name = soup.find('span', {'id': 'ppControl_lblName'}).string
     address = soup.find('span', {'id': 'ppControl_lblAddress1'}).string
     ppid = ''
-    return ppid, address, name
+    return ppid, name, address
 
 
 def voterFocus(num, predir, name, suffix, postdir, city, zipcode, fullcounty):
@@ -132,7 +125,7 @@ def voterFocus(num, predir, name, suffix, postdir, city, zipcode, fullcounty):
     address = address.strip().replace('     ', ' ').replace('    ', ' ')
     address = address.replace('   ', ' ').replace('  ', ' ')
     ppid = ''
-    return ppid, address, name
+    return ppid, name, address
 
 
 def getLee(num, predir, name, suffix, postdir, zipcode):
@@ -156,7 +149,7 @@ def getLee(num, predir, name, suffix, postdir, zipcode):
                 address += ' '
             address += item.text.strip()
         counter += 1
-    return ppid, address, name
+    return ppid, name, address
 
 
 def run(row):
