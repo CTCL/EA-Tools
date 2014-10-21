@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from requests import Session
 import Levenshtein
 import re
+import json
 
 
 def getValues(row):
@@ -77,8 +78,6 @@ def precinctFinder(url, num, predir, name, suffix, postdir, city, zipcode, eid):
     fields['btnLocatePrecinct'] = 'Locate Precinct'
     response = session.post(url + action, data=fields)
     html = response.text.encode('Windows-1252')
-    with open('/home/michael/Desktop/output.html', 'w') as outFile:
-        outFile.write(html)
     soup = BeautifulSoup(response.text, 'lxml')
     addrStr = 'AddrNum={0}:PreDir={1}:StreetName={2}:Type={3}:PostDir={4}:PrecinctID='
     addrStr = addrStr.format(str(int(num)), predir, name, suffix, postdir)
@@ -93,6 +92,45 @@ def precinctFinder(url, num, predir, name, suffix, postdir, city, zipcode, eid):
     soup = BeautifulSoup(response.text.replace('<br />', ' '))
     name = soup.find('span', {'id': 'ppControl_lblName'}).string
     address = soup.find('span', {'id': 'ppControl_lblAddress1'}).string
+    ppid = ''
+    return ppid, address, name
+
+
+def voterFocus(num, predir, name, suffix, postdir, city, zipcode, fullcounty):
+    headers = {'Content-Type': 'application/json; charset=UTF-8'}
+    url = 'http://www.voterfocus.com/findmyprecinct/asmx/service2.asmx/'
+    action = 'GetAddress2'
+    session = Session()
+    data = {'CurCounty': fullcounty, 'CurStreetText': name,
+            'CurStreetNumber': num}
+    response = session.post(url + action, headers=headers,
+                            data=json.dumps(data))
+    dictList = json.loads(json.loads(response.text)['d'])
+    fields = {}
+    for item in dictList:
+        sdir = item['Street_Dir'].upper().strip()
+        stype = item['Street_Type'].upper().strip()
+        dsuffix = item['Street_Dir_Suffix'].upper().strip()
+        szip = item['Street_ZipCode'].strip()
+        if sdir == predir and stype == suffix and dsuffix == postdir and szip == zipcode:
+            fields = item
+            break
+    fields['CurCounty'] = fullcounty
+    fields['Street_Number'] = num
+    action = 'GetPrecincts'
+    response = session.post(url + action, headers=headers,
+                            data=json.dumps(fields))
+    ppInfo = json.loads(json.loads(response.text)['d'])[0]
+    name = ppInfo['place_name'].strip()
+    address = '{0} {1} {2} {3} {4} {5} {6}, FL {7}'
+    address = address.format(ppInfo['street_number'],
+                             ppInfo['street_number_suffix'],
+                             ppInfo['street_dir'], ppInfo['street_name'],
+                             ppInfo['street_type'],
+                             ppInfo['street_dir_suffix'],
+                             ppInfo['city_name'], ppInfo['PN_Zip_Code'])
+    address = address.strip().replace('     ', ' ').replace('    ', ' ')
+    address = address.replace('   ', ' ').replace('  ', ' ')
     ppid = ''
     return ppid, address, name
 
@@ -112,13 +150,13 @@ def run(row):
                 pollingInfo = precinctFinder(url, num, predir, name, suffix,
                                              postdir, city, zipcode, eid)
             elif county.upper() == 'VOLUSIA':
-                county = 'VOL'
                 fullcounty = 'volusia'
-                ##Voter Focus
+                pollingInfo = voterFocus(num, predir, name, suffix, postdir,
+                                         city, zipcode, fullcounty)
             elif county.upper() == 'OSCEOLA':
-                county = 'OSC'
                 fullcounty = 'osceola'
-                ##Voter Focus
+                pollingInfo = voterFocus(num, predir, name, suffix, postdir,
+                                         city, zipcode, fullcounty)
             elif county.upper() == 'LEE':
                 pass
                 #special lee get request function
