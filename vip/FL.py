@@ -84,7 +84,6 @@ def precinctFinder(url, num, predir, name, suffix, postdir, city, zipcode, eid):
             address = address.replace('     ', ' ').replace('     ', ' ')
             address = address.replace('    ', ' ').replace('  ', ' ')
             address = re.sub('[Pp]recinct.*$', '', address).replace('  ', ' ')
-            print address
             values.append((address, value))
     finalStr = matchString(addrStr, values)
     precinct = re.sub('^.*PrecinctID=(.*)$', '\\1', finalStr)
