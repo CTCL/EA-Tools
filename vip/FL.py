@@ -54,18 +54,18 @@ def matchString(string, stringList):
             return str(option[1])
 
 
-def hyphenateBlanks(value):
+def processBlanks(value, replacement):
     if value == '':
-        value = '--'
+        value = replacement
     return value
 
 
 def precinctFinder(url, num, predir, name, suffix, postdir, city, zipcode, eid):
     session = Session()
     action = 'precinctfinder.aspx'
-    fixedpredir = hyphenateBlanks(predir)
-    fixedsuffix = hyphenateBlanks(suffix)
-    fixedpostdir = hyphenateBlanks(postdir)
+    fixedpredir = processBlanks(predir, '--')
+    fixedsuffix = processBlanks(suffix, '--')
+    fixedpostdir = processBlanks(postdir, '--')
     response = session.get(url + action)
     soup = BeautifulSoup(response.text)
     form = soup.find('form', {'name': 'Form1'})
@@ -78,7 +78,7 @@ def precinctFinder(url, num, predir, name, suffix, postdir, city, zipcode, eid):
     fields['btnLocatePrecinct'] = 'Locate Precinct'
     response = session.post(url + action, data=fields)
     html = response.text.encode('Windows-1252')
-    soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(html, 'lxml')
     addrStr = 'AddrNum={0}:PreDir={1}:StreetName={2}:Type={3}:PostDir={4}:PrecinctID='
     addrStr = addrStr.format(str(int(num)), predir, name, suffix, postdir)
     values = []
@@ -135,6 +135,30 @@ def voterFocus(num, predir, name, suffix, postdir, city, zipcode, fullcounty):
     return ppid, address, name
 
 
+def getLee(num, predir, name, suffix, postdir, zipcode):
+    url = 'http://www.precinctfind.com/pl_fl_lee.php'
+    session = Session()
+    payload = {'number': num, 'direction': predir, 'name': name,
+               'type': suffix, 'post_dir': postdir, 'zip': zipcode, 'p': '',
+               'search': 'Search Now', 'debug': '', 'county': 'fl_lee'}
+    response = session.get(url, params=payload)
+    soup = BeautifulSoup(response.text)
+    table = soup.find('table').find('table').find('table').find_all('td')
+    name = ''
+    address = ''
+    ppid = ''
+    counter = 0
+    for item in table:
+        if counter == 0:
+            name = item.text.strip()
+        else:
+            if len(address) > 0:
+                address += ' '
+            address += item.text.strip()
+        counter += 1
+    return ppid, address, name
+
+
 def run(row):
     num, predir, name, suffix, postdir, city, zipcode, county = getValues(row)
     while True:
@@ -158,8 +182,8 @@ def run(row):
                 pollingInfo = voterFocus(num, predir, name, suffix, postdir,
                                          city, zipcode, fullcounty)
             elif county.upper() == 'LEE':
-                pass
-                #special lee get request function
+                pollingInfo = getLee(num, predir, name, suffix, postdir,
+                                     zipcode)
             elif county.upper() == 'MANATEE':
                 pass
                 #weird partial street name request
