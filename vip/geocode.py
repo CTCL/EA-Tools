@@ -9,10 +9,9 @@ def geocode(address):
     payload = {'address': address, 'key': geokey}
     response = requests.get(uri, params=payload)
     data = json.loads(response.text)
-    results = data['results']
-    if len(results) > 0:
-        location = results[0]['geometry']['location']
-        return location
+    results = data['results'][0]
+    location = results[0]['geometry']['location']
+    return location
 
 
 def haversine(location1, location2):
