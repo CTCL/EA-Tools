@@ -38,9 +38,9 @@ def matchString(string, stringList):
     string = string.upper()
     optionList = []
     for text in stringList:
-        score = Levenshtein.ratio(string, text)
+        score = Levenshtein.ratio(string, text[0])
         maximum = max(maximum, score)
-        optionList.append((score, text))
+        optionList.append((score, text[1]))
     for option in optionList:
         if maximum == option[0]:
             return str(option[1])
@@ -71,11 +71,18 @@ def precinctFinder(url, num, predir, name, suffix, postdir, city, zipcode, eid):
     response = session.post(url + action, data=fields)
     html = response.text.encode('Windows-1252')
     soup = BeautifulSoup(html, 'lxml')
-    addrStr = 'AddrNum={0}:PreDir={1}:StreetName={2}:Type={3}:PostDir={4}:PrecinctID='
-    addrStr = addrStr.format(str(int(num)), predir, name, suffix, postdir)
+    addrStr = '{0} {1} {2} {3} {4} {5} {6}'
+    addrStr = addrStr.format(num, predir, name, suffix, postdir, city, zipcode)
+    addrStr = addrStr.replace('   ', ' ').replace('  ', ' ')
     values = []
-    for item in soup.find_all('input', {'type': 'radio'}):
-        values.append(item.get('value'))
+    for item in soup.find_all('label'):
+        field = item.find('input')
+        if field is not None:
+            value = field.get('value')
+            address = item.get_text().replace('\n', ' ').replace('     ', ' ')
+            address = address.replace('     ', ' ').replace('    ', ' ')
+            address = address.replace('  ', ' ').replace('  ', ' ')
+            values.append((address, value))
     finalStr = matchString(addrStr, values)
     precinct = re.sub('^.*PrecinctID=(.*)$', '\\1', finalStr)
     data = {'PrecinctID': precinct, 'eid': eid}
