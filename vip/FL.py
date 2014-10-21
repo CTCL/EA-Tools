@@ -184,12 +184,6 @@ def run(row):
             elif county.upper() == 'LEE':
                 pollingInfo = getLee(num, predir, name, suffix, postdir,
                                      zipcode)
-            elif county.upper() == 'MANATEE':
-                pass
-                #weird partial street name request
-            elif county.upper() == 'CHARLOTTE':
-                pass
-                #weird partial street name request
             else:
                 return '', '', ''
             return pollingInfo
