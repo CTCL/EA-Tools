@@ -35,10 +35,11 @@ def getCounties(soup):
 
 def matchString(string, stringList):
     maximum = 0
-    string = string.upper()
+    string = str(string.strip().upper())
     optionList = []
     for text in stringList:
-        score = Levenshtein.ratio(string, text[0])
+        newstring = str(text[0].strip().upper())
+        score = Levenshtein.ratio(string, newstring)
         maximum = max(maximum, score)
         optionList.append((score, text[1]))
     for option in optionList:
@@ -79,9 +80,11 @@ def precinctFinder(url, num, predir, name, suffix, postdir, city, zipcode, eid):
         field = item.find('input')
         if field is not None:
             value = field.get('value')
-            address = item.get_text().replace('\n', ' ').replace('     ', ' ')
-            address = address.replace('     ', ' ').replace('    ', ' ')
-            address = address.replace('  ', ' ').replace('  ', ' ')
+            address = item.get_text().replace('\n', ' ').replace('\t', ' ')
+            address = address.replace('     ', ' ').replace('     ', ' ')
+            address = address.replace('    ', ' ').replace('  ', ' ')
+            address = re.sub('[Pp]recinct.*$', '', address).replace('  ', ' ')
+            print address
             values.append((address, value))
     finalStr = matchString(addrStr, values)
     precinct = re.sub('^.*PrecinctID=(.*)$', '\\1', finalStr)
