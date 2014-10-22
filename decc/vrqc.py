@@ -185,12 +185,12 @@ def concatenateFields(regData):
         row['FullMailingStreetAddress'] = '{0} {1}'.format(ms1, ms2).strip()
         row['FullPreviousStreetAddress'] = '{0} {1}'.format(ps1, ps2).strip()
         if 'HomeAreaCode' in row and 'HomePhone' in row:
-            hac = str(row['HomeAreaCode'].strip())
-            hp = str(row['HomePhone'].strip())
+            hac = str(row['HomeAreaCode']).strip()
+            hp = str(row['HomePhone']).strip()
             row['FullHomePhone'] = hac + hp
         if 'MobilePhoneAreaCode' in row and 'MobilePhone' in row:
-            mac = str(row['MobilePhoneAreaCode'].strip())
-            mp = str(row['MobilePhone'].strip())
+            mac = str(row['MobilePhoneAreaCode']).strip()
+            mp = str(row['MobilePhone']).strip()
             row['FullMobilePhone'] = mac + mp
         bm = row['DOBmm']
         bd = row['DOBdd']

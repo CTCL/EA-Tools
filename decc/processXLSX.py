@@ -63,10 +63,10 @@ def processXLSX(inputFile, db, cursor):
         dictList.append(item)
     for key in countDict:
         cursor.execute('''UPDATE decc_form_batch
-                                            SET final_item_count = {0},
-                                            return_date = current_date
-                                            WHERE id = {1};
-                                            '''.format(countDict[key], key))
+                          SET final_item_count = {0},
+                          return_date = current_date
+                          WHERE id = {1};
+                          '''.format(countDict[key], key))
         db.commit()
     return dictList, headerList
 
