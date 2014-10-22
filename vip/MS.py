@@ -49,7 +49,6 @@ def getOutputValues(ppData):
 
 
 def matchString(addrStr, jsonStr):
-    print addrStr
     options = json.loads(jsonStr)['d'].split(';')
     optionList = []
     maximum = 0
@@ -61,7 +60,6 @@ def matchString(addrStr, jsonStr):
         maximum = max(maximum, ratio)
     for option in optionList:
         if option[1] == maximum:
-            print option[0]
             rawList = option[0].split('~')
             return rawList[len(rawList) - 2]
 
