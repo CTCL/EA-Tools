@@ -49,18 +49,21 @@ def getOutputValues(ppData):
 
 
 def matchString(addrStr, jsonStr):
+    print addrStr
     options = json.loads(jsonStr)['d'].split(';')
     optionList = []
     maximum = 0
     for option in options:
         text = option.replace('~~~', ' ').replace('~~', ' ').replace('~', ' ')
-        text = re.sub(' [0-9]{9} .*$', '', text)
+        text = re.sub('~[0-9]*~[0-9]*$', '', text)
         ratio = Levenshtein.ratio(str(text), str(addrStr))
         optionList.append((option, ratio))
         maximum = max(maximum, ratio)
     for option in optionList:
         if option[1] == maximum:
-            return re.sub('^.*([0-9]{9}).*$', '\\1', option[0])
+            print option[0]
+            rawList = option[0].split('~')
+            return rawList[len(rawList) - 2]
 
 
 def query(session, city, num, name, suffix, addrStr):
