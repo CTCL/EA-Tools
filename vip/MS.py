@@ -75,14 +75,17 @@ def query(session, city, num, name, suffix, addrStr):
     response = session.post(url + 'StreetDataWithCity', headers=header,
                             data=json.dumps(data))
     name = matchString(name, response.text)
-    data = {'suffixPartial': suffix}
-    response = session.post(url + 'SuffixData', headers=header,
-                            data=json.dumps(data))
-    suffix = matchString(suffix, response.text)
-    data = {'tmpCity': city, 'tmpHouseNum': num, 'tmpStreetName': name,
-            'tmpSuffix': suffix}
-    response = session.post(url + 'SuggestedAddressesAll', headers=header,
-                            data=json.dumps(data))
+    finalData = {'tmpCity': city, 'tmpHouseNum': num, 'tmpStreetName': name}
+    action = 'SuggestedAddressesCity'
+    if suffix != '':
+        data = {'suffixPartial': suffix}
+        response = session.post(url + 'SuffixData', headers=header,
+                                data=json.dumps(data))
+        suffix = matchString(suffix, response.text)
+        finalData['tmpSuffix'] = suffix
+        action = 'SuggestedAddressesAll'
+    response = session.post(url + action, headers=header,
+                            data=json.dumps(finalData))
     precinct = matchString(addrStr, response.text)
     data = {'tmpSplitId': precinct}
     response = session.post(url + 'GetLocationData', headers=header,
