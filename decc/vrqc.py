@@ -175,12 +175,12 @@ def report(reportData):
 
 def concatenateFields(regData):
     for row in regData:
-        cs1 = row['CurrentStreetAddress1'].strip()
-        cs2 = row['CurrentStreetAddress2'].strip()
-        ms1 = row['MailingAddress1'].strip()
-        ms2 = row['MailingAddress2'].strip()
-        ps1 = row['PreviousStreetAddress1'].strip()
-        ps2 = row['PreviousStreetAddress2'].strip()
+        cs1 = str(row['CurrentStreetAddress1']).strip()
+        cs2 = str(row['CurrentStreetAddress2']).strip()
+        ms1 = str(row['MailingAddress1']).strip()
+        ms2 = str(row['MailingAddress2']).strip()
+        ps1 = str(row['PreviousStreetAddress1']).strip()
+        ps2 = str(row['PreviousStreetAddress2']).strip()
         row['FullCurrentStreetAddress'] = '{0} {1}'.format(cs1, cs2).strip()
         row['FullMailingStreetAddress'] = '{0} {1}'.format(ms1, ms2).strip()
         row['FullPreviousStreetAddress'] = '{0} {1}'.format(ps1, ps2).strip()
@@ -192,14 +192,14 @@ def concatenateFields(regData):
             mac = str(row['MobilePhoneAreaCode']).strip()
             mp = str(row['MobilePhone']).strip()
             row['FullMobilePhone'] = mac + mp
-        bm = row['DOBmm']
-        bd = row['DOBdd']
-        by = row['DOByy']
+        bm = str(row['DOBmm'])
+        bd = str(row['DOBdd'])
+        by = str(row['DOByy'])
         if bm != '' and bd != '' and by != '':
             row['FullDOB'] = '{0}/{1}/{2}'.format(bm, bd, by)
-        sm = row['DateSignedmm']
-        sd = row['Datesigneddd']
-        sy = row['Datesignedyy']
+        sm = str(row['DateSignedmm'])
+        sd = str(row['Datesigneddd'])
+        sy = str(row['Datesignedyy'])
         if sm != '' and sd != '' and sy != '':
             row['FullDateSigned'] = '{0}/{1}/{2}'.format(sm, sd, sy)
     return regData
