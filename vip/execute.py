@@ -41,13 +41,16 @@ def VIP(state, creds):
             'Google PP ID': gppid, 'Google PP Name': gname,
             'Google PP Address': gaddress
         }
-        glocation = geocode.geocode(gaddress)
-        soslocation = geocode.geocode(sosaddress)
-        if glocation is not None and soslocation is not None:
-            distance = geocode.haversine(glocation, soslocation)
-            rowDict['SOS Location'] = str(soslocation)
-            rowDict['Google Location'] = str(glocation)
-            rowDict['Distance'] = str(distance)
+        try:
+            glocation = geocode.geocode(gaddress)
+            soslocation = geocode.geocode(sosaddress)
+            if glocation is not None and soslocation is not None:
+                distance = geocode.haversine(glocation, soslocation)
+                rowDict['SOS Location'] = str(soslocation)
+                rowDict['Google Location'] = str(glocation)
+                rowDict['Distance'] = str(distance)
+        except Exception:
+            pass
         while True:
             try:
                 sheets.writeRow(rowDict, client, sheet['id'])
