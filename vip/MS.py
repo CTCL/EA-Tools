@@ -94,13 +94,13 @@ def query(session, city, num, name, suffix, addrStr):
 
 
 def run(row):
-    while True:
-        try:
-            session = Session()
-            city, num, name, suffix, addrStr = getValues(row)
-            ppData = query(session, city, num, name, suffix, addrStr)
-            pollingInfo = getOutputValues(ppData)
-            return pollingInfo
-        except Exception as inst:
-            print type(inst)
-            print inst
+    try:
+        session = Session()
+        city, num, name, suffix, addrStr = getValues(row)
+        ppData = query(session, city, num, name, suffix, addrStr)
+        pollingInfo = getOutputValues(ppData)
+        return pollingInfo
+    except Exception as inst:
+        print type(inst)
+        print inst
+        return '', '', ''
