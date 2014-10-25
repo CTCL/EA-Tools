@@ -63,14 +63,11 @@ def getBexar(num, predir, name, suffix, postdir, zipcode):
     fields['tab2zipcode'] = zipcode
     fields['btnTab2'] = 'Search'
     response = session.post(url, data=fields)
-    with open('/home/michael/Desktop/output.html', 'w') as outFile:
-        outFile.write(response.text)
     soup = BeautifulSoup(response.text)
     results = str(soup.find('div', {'id': 'DivResultFound'}).find('h3'))
     ppid = re.sub('^.* ([Pp][Rr][Ee][Cc][Ii][Nn][Cc][Tt] [0-9A-Za-z]*) .*$',
                   '\\1', results.replace('\n', ''))
     resultList = results.split('<br/>')
-    print resultList
     name = resultList[3].strip()
     address = resultList[4].strip()
     return ppid, name, address
@@ -80,7 +77,6 @@ def getHarris(lastName, firstName, num, name):
     url = 'http://www.harrisvotes.org/VoterBallotSearch.aspx?L=E'
     session = Session()
     response = session.get(url)
-    
     soup = BeautifulSoup(response.text, 'lxml')
     form = soup.find('form')
     fields = getHiddenValues(form)
@@ -91,8 +87,6 @@ def getHarris(lastName, firstName, num, name):
     fields[baseName + 'txtStreet'] = name
     fields[baseName + 'btnSearchNA'] = 'Search'
     response = session.post(url, data=fields)
-    with open('/home/michael/Desktop/output.html', 'w') as outFile:
-        outFile.write(response.text.replace(u'\xa0', '').replace(u'\xd1', 'n'))
     soup = BeautifulSoup(response.text, 'lxml')
     baseName = 'ctl00_ContentPlaceHolder1_GridViewA_ctl02_GridViewLocations_'
     ppid = ''
@@ -107,6 +101,34 @@ def getHarris(lastName, firstName, num, name):
     return ppid, name, address
 
 
+def getDallas(firstName, lastName, dob):
+    url = 'http://dallas-tx.mobile.clarityelections.com/mobile/seam/resource/rest/voter/find'
+    payload = {
+        'VOTER_ELIGIBILITY_LOOKUP_FIRST_NAME': firstName,
+        'VOTER_ELIGIBILITY_LOOKUP_LAST_NAME': lastName,
+        'VOTER_ELIGIBILITY_LOOKUP_BIRTH_DATE': dob
+    }
+    session = Session()
+    response = session.get(url, params=payload)
+    text = response.text.replace('\n', '')
+    text = re.sub('^null\\((.*)\\)$', '\\1', text)
+    data = json.loads(text)[0]
+    precinctInfo = data['precinct']
+    ppid = ''
+    address = ''
+    if 'name' in precinctInfo:
+        ppid = precinctInfo['name']
+    ppInfo = precinctInfo['defaultPollingPlace']
+    name = ppInfo['name']
+    addrDict = ppInfo['streetAddress']
+    address = '{0} {1} {2} {3}, TX {4}'.format(addrDict['address1'],
+                                               addrDict['address2'],
+                                               addrDict['address3'],
+                                               addrDict['city'],
+                                               addrDict['zip'])
+    return ppid, name, address
+
+
 def run(row):
     num, predir, name, suffix, postdir, city, zipcode, county, dob, firstName, lastName = getValues(row)
     try:
@@ -115,7 +137,7 @@ def run(row):
         elif county.upper() == 'HARRIS':
             pollingInfo = getHarris(lastName, firstName, num, name)
         elif county.upper() == 'DALLAS':
-            pass
+            pollingInfo = getDallas(firstName, lastName, dob)
         elif county.upper() == 'TARRANT':
             pass
         else:
