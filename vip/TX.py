@@ -92,8 +92,7 @@ def getHarris(lastName, firstName, num, name):
     ppid = ''
     name = soup.find('span', {'id': baseName + 'ctl02_lblLocation'}).string
     name = name.strip()
-    address = soup.find('span',
-                        {'id': baseName + 'ctl02_lblPollingAddress'}).string
+    address = soup.find('span', {'id': baseName + 'ctl02_lblPollingAddress'}).string.split(',')[0]
     address = address.strip() + ' '
     address += soup.find('span',
                          {'id': baseName + 'ctl02_lblPollingCity'}).string
@@ -138,8 +137,6 @@ def run(row):
             pollingInfo = getHarris(lastName, firstName, num, name)
         elif county.upper() == 'DALLAS':
             pollingInfo = getDallas(firstName, lastName, dob)
-        elif county.upper() == 'TARRANT':
-            pass
         else:
             return '', '', ''
         return pollingInfo
