@@ -41,10 +41,6 @@ def getHiddenValues(soup):
     fields = {}
     for item in form.find_all('input', {'type': 'hidden'}):
         fields[item.get('name')] = item.get('value')
-    fields['hiddenInputToUpdateATBuffer_CommonToolkitScripts'] = '1'
-    fields['ctl00$pnlMenu_CollapsiblePanelExtender_ClientState'] = 'true'
-    fields['ctl00$AccordionStateBoardMenu_AccordionExtender_ClientState'] = 0
-    fields['ctl00$mtbSearch'] = ''
     return fields
 
 
