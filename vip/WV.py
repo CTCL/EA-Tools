@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from requests import Session
+import json
 
 
 def getValues(row):
@@ -30,13 +31,13 @@ def getHiddenValues(soup):
     fields = {}
     manualhide = form.find('div', {'class': 'displayNone printNone'})
     for item in manualhide.find_all('input'):
-        fields[item.get('name')] = item.get('value')
+        value = item.get('value')
+        if value is not None:
+            fields[item.get('name')] = value
+        else:
+            fields[item.get('name')] = ''
     for item in form.find_all('input', {'type': 'hidden'}):
         fields[item.get('name')] = item.get('value')
-    fields['hiddenInputToUpdateATBuffer_CommonToolkitScripts'] = '1'
-    fields['ctl00$pnlMenu_CollapsiblePanelExtender_ClientState'] = 'true'
-    fields['ctl00$AccordionStateBoardMenu_AccordionExtender_ClientState'] = 0
-    fields['ctl00$mtbSearch'] = ''
     return fields
 
 
@@ -46,9 +47,11 @@ def query(fname, lname, dob, fields, formURL, session):
     fields[baseName + 'txtNameLast'] = lname
     fields[baseName + 'txtDob'] = dob
     fields[baseName + 'btnSubmit'] = 'Submit'
+    with open('/home/michael/Desktop/output.json', 'w') as outFile:
+        outFile.write(json.dumps(fields, indent=4))
     response = session.post(formURL, data=fields)
-    html = response.text.replace('<br />', '***').replace(u'\u2014', '-')
-    return html
+    html = response.text
+    return html.replace(u'\u2014', '-')#.replace('<br />', '***')
 
 
 def run(row):
