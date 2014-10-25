@@ -28,15 +28,6 @@ def getHiddenValues(form):
     return fields
 
 
-def getCounties(soup):
-    counties = {}
-    selectName = 'ctl00$ContentPlaceHolder1$usrCounty$cboCounty'
-    select = soup.find('select', {'name': selectName})
-    for item in select.find_all('option'):
-        counties[item.text.strip().upper()] = item.get('value')
-    return counties
-
-
 def matchString(string, stringList):
     maximum = 0
     string = str(string.strip().upper())
