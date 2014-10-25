@@ -7,8 +7,7 @@ def getValues(row):
     fname = row['tsmart_first_name']
     lname = row['tsmart_last_name']
     dobStr = row['voterbase_dob']
-    dob = '{0}/{1}/{2}'.format(int(dobStr[4:6]), int(dobStr[6:8]),
-                               int(dobStr[:4]))
+    dob = '{0}/{1}/{2}'.format(dobStr[4:6], dobStr[6:8], dobStr[:4])
     return fname, lname, dob
 
 
@@ -38,6 +37,8 @@ def getHiddenValues(soup):
             fields[item.get('name')] = ''
     for item in form.find_all('input', {'type': 'hidden'}):
         fields[item.get('name')] = item.get('value')
+    fields['__EVENTTARGET'] = ''
+    fields['__EVENTARGUMENT'] = ''
     return fields
 
 
@@ -51,7 +52,7 @@ def query(fname, lname, dob, fields, formURL, session):
         outFile.write(json.dumps(fields, indent=4))
     response = session.post(formURL, data=fields)
     html = response.text
-    return html.replace(u'\u2014', '-')#.replace('<br />', '***')
+    return html.replace(u'\u2014', '-')  # .replace('<br />', '***')
 
 
 def run(row):
