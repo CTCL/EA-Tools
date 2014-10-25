@@ -47,7 +47,7 @@ def query(fname, lname, dob, fields, formURL, session):
     fields[baseName + 'txtNameFirst'] = fname
     fields[baseName + 'txtNameLast'] = lname
     fields[baseName + 'txtDob'] = dob
-    fields[baseName + 'btnSubmit'] = 'Submit'
+    fields[baseName + 'btnSearch'] = 'Submit'
     with open('/home/michael/Desktop/output.json', 'w') as outFile:
         outFile.write(json.dumps(fields, indent=4))
     response = session.post(formURL, data=fields)
