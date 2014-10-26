@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from requests import Session
 import json
+import time
 
 
 def getValues(row):
@@ -52,7 +53,7 @@ def query(fname, lname, dob, fields, formURL, session):
         outFile.write(json.dumps(fields, indent=4))
     response = session.post(formURL, data=fields)
     html = response.text
-    return html.replace(u'\u2014', '-')  # .replace('<br />', '***')
+    return html.replace(u'\u2014', '-').replace('<br />', '***')
 
 
 def run(row):
@@ -61,11 +62,10 @@ def run(row):
         session = Session()
         fname, lname, dob = getValues(row)
         response = session.get(formURL)
+        time.sleep(2)
         soup = BeautifulSoup(response.text)
         hiddenFields = getHiddenValues(soup)
         html = query(fname, lname, dob, hiddenFields, formURL, session)
-        with open('/home/michael/Desktop/output.html', 'w') as outFile:
-            outFile.write(html)
         soup = BeautifulSoup(html)
         pollingInfo = getOutputValues(soup)
         return pollingInfo
