@@ -128,6 +128,52 @@ def getDallas(firstName, lastName, dob):
     return ppid, name, address
 
 
+def getEPC(num, predir, name, suffix, postdir, city, zipcode):
+    city = city.upper()
+    session = Session()
+    url = 'http://www.epcountyvotes.com/ce/mobile/seam/resource/rest/precinct/'
+    addrStr = '{0} {1} {2} {3} {4} {5} {6}'.format(num, predir, name, suffix,
+                                                   postdir, city, zipcode)
+    data = {
+        'PRECINCT_FINDER_ADDRESS_NUMBER': num,
+        'PRECINCT_FINDER_STREET_NAME': name,
+        'PRECINCT_FINDER_APARTMENT_NUMBER': '',
+        'PRECINCT_FINDER_CITY': city,
+        'lang': 'en'
+    }
+    response = session.get(url + 'findstreet', params=data)
+    addrData = json.loads(response.text)
+    addresses = addrData['streets']
+    addrList = []
+    for item in addresses:
+        addr = '{0} {1} {2} {3} {4} {5} {6}'.format(item['address'],
+                                                    item['predir'],
+                                                    item['street'],
+                                                    item['type'],
+                                                    item['postdir'],
+                                                    item['city'],
+                                                    item['zipcode'])
+        addrList.append((addr, item['precinct']))
+    precinct = matchString(addrStr, addrList)
+    data = {
+        'precinctId': precinct,
+        'lang': 'en'
+    }
+    response = session.get(url + 'precinctdetail', params=data)
+    precinctData = json.loads(response.text)
+    ppid = ''
+    if 'precinctName' in precinctData:
+        ppid = precinctData['precinctName']
+    ppInfo = precinctData['defaultPollingPlace']
+    name = ppInfo['name']
+    addrDict = ppInfo['streetAddress']
+    address = '{0} {1} {2}, TX {3}'.format(addrDict['address1'],
+                                           addrDict['address2'],
+                                           addrDict['city'],
+                                           addrDict['zip'])
+    return ppid, name, address
+
+
 def run(row):
     num, predir, name, suffix, postdir, city, zipcode, county, dob, firstName, lastName = getValues(row)
     try:
@@ -137,6 +183,8 @@ def run(row):
             pollingInfo = getHarris(lastName, firstName, num, name)
         elif county.upper() == 'DALLAS':
             pollingInfo = getDallas(firstName, lastName, dob)
+        elif county.upper() == 'EL PASO':
+            pollingInfo = getEPC(num, predir, name, suffix, postdir, city, zipcode)
         else:
             return '', '', ''
         return pollingInfo
