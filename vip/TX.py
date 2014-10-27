@@ -128,10 +128,10 @@ def getDallas(firstName, lastName, dob):
     return ppid, name, address
 
 
-def getEPC(num, predir, name, suffix, postdir, city, zipcode):
+def getEPaDC(num, predir, name, suffix, postdir, city, zipcode, url):
     city = city.upper()
     session = Session()
-    url = 'http://www.epcountyvotes.com/ce/mobile/seam/resource/rest/precinct/'
+    url = 'http://{0}/ce/mobile/seam/resource/rest/precinct/'.format(url)
     addrStr = '{0} {1} {2} {3} {4} {5} {6}'.format(num, predir, name, suffix,
                                                    postdir, city, zipcode)
     data = {
@@ -184,7 +184,13 @@ def run(row):
         elif county.upper() == 'DALLAS':
             pollingInfo = getDallas(firstName, lastName, dob)
         elif county.upper() == 'EL PASO':
-            pollingInfo = getEPC(num, predir, name, suffix, postdir, city, zipcode)
+            url = 'www.epcountyvotes.com'
+            pollingInfo = getEPaDC(num, predir, name, suffix, postdir, city,
+                                   zipcode, url)
+        elif county.upper() == 'DENTON':
+            url = 'www.votedenton.com'
+            pollingInfo = getEPaDC(num, predir, name, suffix, postdir, city,
+                                   zipcode, url)
         else:
             return '', '', ''
         return pollingInfo
