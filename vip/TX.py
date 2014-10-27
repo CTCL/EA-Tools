@@ -164,7 +164,7 @@ def getEPaDC(num, predir, name, suffix, postdir, city, zipcode, url):
     ppid = ''
     if 'precinctName' in precinctData:
         ppid = precinctData['precinctName']
-    ppInfo = precinctData['defaultPollingPlace']
+    ppInfo = precinctData['electionPrecincts'][0]['pollingPlace']
     name = ppInfo['name']
     addrDict = ppInfo['streetAddress']
     address = '{0} {1} {2}, TX {3}'.format(addrDict['address1'],
