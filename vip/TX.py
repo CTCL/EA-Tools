@@ -174,6 +174,36 @@ def getEPaDC(num, predir, name, suffix, postdir, city, zipcode, url):
     return ppid, name, address
 
 
+def getHidalgo(firstName, lastName, dob):
+    url = 'http://apps.co.hidalgo.tx.us/VoterLookup/Lookup/Results'
+    year = dob[6:]
+    session = Session()
+    data = {'LastName': lastName, 'FirstName': firstName, 'DOBYear': year}
+    response = session.post(url, data=data)
+    soup = BeautifulSoup(response.text)
+    pageDict = {}
+    for item in soup.find_all('div'):
+        label = item.find('span', {'class': 'field-label'})
+        value = item.find('span', {'class': 'field-value'})
+        if label is not None and value is not None:
+            for string in value.strings:
+                pageDict[label.get_text().strip()] = string.strip()
+                break
+    ppid = ''
+    name = ''
+    address = ''
+    if 'Precinct' in pageDict:
+        ppid = pageDict['Precinct']
+    if 'Location:' in pageDict:
+        name = pageDict['Location:']
+    if 'Address:' in pageDict:
+        address = pageDict['Address:']
+    if 'City:' in pageDict:
+        address += ' ' + pageDict['City:']
+    address += ' TX'
+    return ppid, name, address
+
+
 def run(row):
     num, predir, name, suffix, postdir, city, zipcode, county, dob, firstName, lastName = getValues(row)
     try:
@@ -191,6 +221,8 @@ def run(row):
             url = 'www.votedenton.com'
             pollingInfo = getEPaDC(num, predir, name, suffix, postdir, city,
                                    zipcode, url)
+        elif county.upper() == 'HIDALGO':
+            pollingInfo = getHidalgo(firstName, lastName, dob)
         else:
             return '', '', ''
         return pollingInfo
