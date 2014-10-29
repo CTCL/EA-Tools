@@ -132,7 +132,7 @@ def getDallas(firstName, lastName, dob):
 def getEPaDC(num, predir, name, suffix, postdir, city, zipcode, url):
     city = city.upper()
     session = Session()
-    url = 'http://{0}/ce/mobile/seam/resource/rest/precinct/'.format(url)
+    url = 'http://{0}/mobile/seam/resource/rest/precinct/'.format(url)
     addrStr = '{0} {1} {2} {3} {4} {5} {6}'.format(num, predir, name, suffix,
                                                    postdir, city, zipcode)
     data = {
@@ -290,11 +290,11 @@ def run(row):
         elif county.upper() == 'DALLAS':
             pollingInfo = getDallas(firstName, lastName, dob)
         elif county.upper() == 'EL PASO':
-            url = 'www.epcountyvotes.com'
+            url = 'www.epcountyvotes.com/ce'
             pollingInfo = getEPaDC(num, predir, name, suffix, postdir, city,
                                    zipcode, url)
         elif county.upper() == 'DENTON':
-            url = 'www.votedenton.com'
+            url = 'www.votedenton.com/ce'
             pollingInfo = getEPaDC(num, predir, name, suffix, postdir, city,
                                    zipcode, url)
         elif county.upper() == 'HIDALGO':
@@ -303,6 +303,10 @@ def run(row):
             pollingInfo = getFBC(firstName, lastName, dob)
         elif county.upper() == 'MONTGOMERY':
             pollingInfo = getMontgomery(firstName, lastName, dob)
+        elif county.upper() == 'JEFFERSON':
+            url = 'jefferson-tx.mobile.clarityelections.com'
+            pollingInfo = getEPaDC(num, predir, name, suffix, postdir, city,
+                                   zipcode, url)
         else:
             return '', '', ''
         return pollingInfo
