@@ -3,6 +3,7 @@ from requests import Session
 import Levenshtein
 import re
 import json
+import time
 
 
 def getValues(row):
@@ -204,6 +205,46 @@ def getHidalgo(firstName, lastName, dob):
     return ppid, name, address
 
 
+def getFBC(firstName, lastName, dob):
+    listURL = 'http://www.fortbendcountytx.gov/index.aspx?page=1099'
+    formURL = 'https://progprod.co.fort-bend.tx.us/Voter/default.aspx'
+    session = Session()
+    response = session.get(listURL)
+    soup = BeautifulSoup(response.text)
+    siteDict = {}
+    tables = soup.find_all('table', {'id': re.compile('ctl00_listDataGrid_')})
+    for table in tables:
+        header = table.find('td', {'class': 'facility_header_cell'})
+        values = header.string.split('|')
+        name = values[0].strip()
+        link = table.find('a', {'id': re.compile('googleMapHyperLink')})
+        address = ' '.join(link.strings)
+        location = {'name': name, 'address': address}
+        for i in range(1, len(values)):
+            siteDict[values[i].strip()] = location
+    response = session.get(formURL, verify=False)
+    formURL = response.url
+    soup = BeautifulSoup(response.text)
+    fields = getHiddenValues(soup.find('form'))
+    fields['voterLname'] = lastName
+    fields['voterFname'] = firstName
+    fields['voterDOB'] = dob
+    fields['sS'] = 'Start Search'
+    fields['type'] = 'voterLname'
+    fields['type1'] = 'voterCNumber'
+    fields['voterDate'] = 'null'
+    fields['voterCNumber'] = ''
+    fields['formFirstName'] = ''
+    fields['formLastName'] = ''
+    response = session.post(formURL, data=fields, verify=False)
+    soup = BeautifulSoup(response.text)
+    ppid = soup.find('span', {'id': 'Precinct'}).string.strip()
+    location = siteDict[ppid]
+    name = location['name']
+    address = location['address']
+    return ppid, name, address
+
+
 def run(row):
     num, predir, name, suffix, postdir, city, zipcode, county, dob, firstName, lastName = getValues(row)
     try:
@@ -223,6 +264,8 @@ def run(row):
                                    zipcode, url)
         elif county.upper() == 'HIDALGO':
             pollingInfo = getHidalgo(firstName, lastName, dob)
+        elif county.upper() == 'FORT BEND':
+            pollingInfo = getFBC(firstName, lastName, dob)
         else:
             return '', '', ''
         return pollingInfo
