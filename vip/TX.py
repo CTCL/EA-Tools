@@ -239,9 +239,12 @@ def getFBC(firstName, lastName, dob):
     response = session.post(formURL, data=fields, verify=False)
     soup = BeautifulSoup(response.text)
     ppid = soup.find('span', {'id': 'Precinct'}).string.strip()
-    location = siteDict[ppid]
-    name = location['name']
-    address = location['address']
+    name = ''
+    address = ''
+    if ppid in siteDict:
+        location = siteDict[ppid]
+        name = location['name']
+        address = location['address']
     return ppid, name, address
 
 
