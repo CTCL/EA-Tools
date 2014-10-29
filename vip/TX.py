@@ -245,6 +245,41 @@ def getFBC(firstName, lastName, dob):
     return ppid, name, address
 
 
+def getMontgomery(firstName, lastName, dob):
+    ppid = ''
+    name = ''
+    address = ''
+    session = Session()
+    url = 'http://www.mctx.org/electioninfo/voterlookupresult.aspx?curLang=English'
+    session.get(url)
+    data = {
+        'LNAME': lastName,
+        'FNAME': firstName,
+        'DOBM': dob[:2],
+        'DOBD': dob[3:5],
+        'DOBY': dob[6:],
+        'SUBMIT1': 'Search'
+    }
+    response = session.post(url, data=data)
+    soup = BeautifulSoup(response.text)
+    table = soup.find('table', {'id': 'dgrElectionsNew'})
+    link = table.find('a', {'href': re.compile('drvDirectionsNew')})
+    name = table.find_all('tr')[1].find_all('td')[4].get_text()
+    infoURL = link.get('href').replace('..', 'http://www.mctx.org')
+    response = session.get(infoURL)
+    soup = BeautifulSoup(response.text)
+    location = soup.find('font', {'size': '4'})
+    lList = []
+    for line in location.strings:
+        lList.append(line.strip())
+    address = ''
+    for i in range(1, len(lList) - 1):
+        if len(address) > 0:
+            address += ' '
+        address += lList[i]
+    return ppid, name, address
+
+
 def run(row):
     num, predir, name, suffix, postdir, city, zipcode, county, dob, firstName, lastName = getValues(row)
     try:
@@ -266,6 +301,8 @@ def run(row):
             pollingInfo = getHidalgo(firstName, lastName, dob)
         elif county.upper() == 'FORT BEND':
             pollingInfo = getFBC(firstName, lastName, dob)
+        elif county.upper() == 'MONTGOMERY':
+            pollingInfo = getMontgomery(firstName, lastName, dob)
         else:
             return '', '', ''
         return pollingInfo
