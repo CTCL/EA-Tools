@@ -22,7 +22,8 @@ states = {'AL': 'Alabama', 'AR': 'Arkansas', 'AZ': 'Arizona', 'ME': 'Maine',
           'IL': 'Illinois', 'IN': 'Indiana', 'ID': 'Idaho', 'GA': 'Georgia',
           'MA': 'Massachusetts', 'SD': 'South Dakota', 'VT': 'Vermont',
           'FL': 'Florida', 'MS': 'Mississippi', 'KY': 'Kentucky',
-          'TX': 'Texas', 'SC': 'South Carolina', 'WV': 'West Virginia'}
+          'TX': 'Texas', 'SC': 'South Carolina', 'WV': 'West Virginia',
+          'NM': 'New Mexico'}
 
 scope1 = 'https://spreadsheets.google.com/feeds'
 scope2 = 'https://www.googleapis.com/auth/drive'

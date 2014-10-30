@@ -66,6 +66,8 @@ def getPollingPlace(soup):
             else:
                 pollingDict[labels[i].text] = data[i].text
         name = pollingDict['Name']
+        if 'Ballot Style' in pollingDict:
+            ppid = pollingDict['Ballot Style']
         if 'Address' in pollingDict:
             street = pollingDict['Address']
         if 'City' in pollingDict:
