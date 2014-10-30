@@ -48,19 +48,24 @@ def getResponseSoup(payload, url):
 
 
 def getPollingPlace(soup):
-    pollingPlaces = soup.find_all('div', {'id': 'polling-place'}, 'lxml')
+    pollingPlaces = soup.find_all('div', {'id': 'polling-place'})
     ppid = ''
     address = ''
     name = ''
     if len(pollingPlaces) > 0:
-        defaultPP = pollingPlaces[len(pollingPlaces) - 1]
-        labels = defaultPP.find_all('span', {'class': 'label'})
-        data = defaultPP.find_all('span', {'class': 'data'})
         pollingDict = {}
+        election = pollingPlaces[0]
+        labels = election.find_all('span', {'class': 'label'})
+        data = election.find_all('span', {'class': 'data'})
+        for i in range(len(labels)):
+            pollingDict[labels[i].text] = data[i].text
         zip = ''
         street = ''
         city = ''
-        for i in range(0, len(labels)):
+        defaultPP = pollingPlaces[len(pollingPlaces) - 1]
+        labels = defaultPP.find_all('span', {'class': 'label'})
+        data = defaultPP.find_all('span', {'class': 'data'})
+        for i in range(len(labels)):
             if re.search('Zip', labels[i].text):
                 zip = data[i].text
             else:
