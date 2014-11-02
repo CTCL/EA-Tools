@@ -3,7 +3,6 @@ from requests import Session
 import Levenshtein
 import re
 import json
-import time
 
 
 def getValues(row):
@@ -283,6 +282,49 @@ def getMontgomery(firstName, lastName, dob):
     return ppid, name, address
 
 
+def getElectionDaySite(county, lastName, firstName, dob, zipcode):
+    url = 'https://team1.sos.state.tx.us/voterws/viw/faces/SearchSelectionPolling.jsp'
+    session = Session()
+    response = session.get(url, verify=False)
+    soup = BeautifulSoup(response.text)
+    hidden = getHiddenValues(soup.find('form'))
+    data = {
+        'form1:radio1': 'N',
+        'form1:button1': 'Next (Siga) >',
+        'com.sun.faces.VIEW': hidden['com.sun.faces.VIEW'],
+        'form1': 'form1'
+    }
+    response = session.post(url, data=data, verify=False)
+    soup = BeautifulSoup(response.text, 'lxml')
+    hidden = getHiddenValues(soup.find('form'))
+    select = soup.find('select')
+    counties = []
+    for option in select.find_all('option'):
+        counties.append((option.string.upper(), option.get('value')))
+    county = matchString(county.upper(), counties)
+    print county
+    data = {
+        'form1:menu2': county,
+        'form1:lastName': lastName,
+        'form1:firstName': firstName,
+        'form1:tdlMonth': dob[:2],
+        'form1:tdlDay': dob[3:5],
+        'form1:tdlYear': dob[6:],
+        'form1:zip': zipcode,
+        'form1:button1': 'Next (Siga) >',
+        'com.sun.faces.VIEW': hidden['com.sun.faces.VIEW'],
+        'form1': 'form1'
+    }
+    response = session.post(url, data=data, verify=False)
+    with open('/home/michael/Desktop/output.html', 'w') as outFile:
+        outFile.write(response.text.encode('windows-1252'))
+    soup = BeautifulSoup(response.text)
+    ppid = soup.find('span', {'id': 'form1:format7'}).string
+    name = ''
+    address = ''
+    return ppid, name, address
+
+
 def run(row):
     num, predir, name, suffix, postdir, city, zipcode, county, dob, firstName, lastName = getValues(row)
     try:
@@ -311,7 +353,8 @@ def run(row):
             pollingInfo = getEPaDC(num, predir, name, suffix, postdir, city,
                                    zipcode, url)
         else:
-            return '', '', ''
+            pollingInfo = getElectionDaySite(county, lastName, firstName,
+                                             dob, zipcode)
         return pollingInfo
     except Exception as inst:
         print type(inst)
