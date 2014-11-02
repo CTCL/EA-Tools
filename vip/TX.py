@@ -319,6 +319,9 @@ def getElectionDaySite(county, lastName, firstName, dob, zipcode):
     ppid = soup.find('span', {'id': 'form1:format7'}).string
     name = ''
     address = ''
+    listLink = soup.find('a', {'id': 'form1:linkEx2'})
+    if listLink is not None:
+        name = listLink.get('href')
     try:
         select = soup.find('select')
         hidden = getHiddenValues(soup.find('form'))
