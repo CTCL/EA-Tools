@@ -302,7 +302,6 @@ def getElectionDaySite(county, lastName, firstName, dob, zipcode):
     for option in select.find_all('option'):
         counties.append((option.string.upper(), option.get('value')))
     county = matchString(county.upper(), counties)
-    print county
     data = {
         'form1:menu2': county,
         'form1:lastName': lastName,
@@ -316,12 +315,52 @@ def getElectionDaySite(county, lastName, firstName, dob, zipcode):
         'form1': 'form1'
     }
     response = session.post(url, data=data, verify=False)
-    with open('/home/michael/Desktop/output.html', 'w') as outFile:
-        outFile.write(response.text.encode('windows-1252'))
     soup = BeautifulSoup(response.text)
     ppid = soup.find('span', {'id': 'form1:format7'}).string
     name = ''
     address = ''
+    try:
+        select = soup.find('select')
+        hidden = getHiddenValues(soup.find('form'))
+        elections = []
+        election = '2014 NOVEMBER 4TH GENERAL ELECTION'
+        for option in select.find_all('option'):
+            elections.append((option.string.upper(), option.get('value')))
+        election = matchString(election, elections)
+        data = {
+            'form1:menu1': election,
+            'form1:radio2': 'ED',
+            'form1:button1': 'Next (Siga) >',
+            'com.sun.faces.VIEW': hidden['com.sun.faces.VIEW'],
+            'form1': 'form1'
+        }
+        url = 'https://team1.sos.state.tx.us/voterws/viw/faces/DisplayVoter.jsp'
+        response = session.post(url, data=data, verify=False)
+        soup = BeautifulSoup(response.text)
+        nameSpan = soup.find('span', {'id': 'form1:format10'})
+        line1 = soup.find('span', {'id': 'form1:format1'})
+        line2 = soup.find('span', {'id': 'form1:format4'})
+        city = soup.find('span', {'id': 'form1:format2'})
+        zipcode = soup.find('span', {'id': 'form1:format8'})
+        if nameSpan is not None:
+            name = nameSpan.get_text().strip()
+        if line1 is not None:
+            address = line1.get_text().strip()
+        if line2 is not None:
+            if len(address) > 0:
+                address += ' '
+            address += line2.get_text().strip()
+        if city is not None:
+            if len(address) > 0:
+                address += ' '
+            address += city.get_text().strip()
+        if zipcode is not None:
+            if len(address) > 0:
+                address += ' '
+            address += zipcode.get_text().strip()
+    except Exception as error:
+        print type(error)
+        print error
     return ppid, name, address
 
 
