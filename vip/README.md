@@ -8,7 +8,7 @@ This folder contains the scripts which QA early and election-day voting sites. E
 +  *civicInfo.py* interacts with the Google CivicInfo API. Contains 3 functions. 
   +  *getVoterInfo()* returns a decoded json object for the provided address string and electionID, by default the electionID is set to 4100-the 2014 General Election. 
   +  *getVIPValues()* accepts the object provided by getVoterInfo() and returns the election day polling location details.
-  +  *getEVValue()* accepts the object provided by getVoterInfo() and returns the early-vote polling location details. 
+  +  *getEVValues()* accepts the object provided by getVoterInfo() and returns the early-vote polling location details. 
 
 
 +  *sheets.py* interacts with the Google Drive and Spreadsheets API's includes functions which can be used to copy a Google Sheet and then write rows to it. 
