@@ -14,7 +14,11 @@ def getValues(row):
     city = row['vf_reg_cass_city']
     zipcode = row['vf_reg_cass_zip']
     county = row['vf_county_name']
-    return num, predir, name, suffix, postdir, city, zipcode, county
+    date = str(row['voterbase_dob'])
+    lastName = row['tsmart_last_name']
+    if len(date) == 8:
+        dob = '{0}/{1}/{2}'.format(date[4:6], date[6:8], date[:4])
+    return num, predir, name, suffix, postdir, city, zipcode, county, dob, lastName
 
 
 def getHiddenValues(form):
@@ -22,15 +26,6 @@ def getHiddenValues(form):
     for item in form.find_all('input', {'type': 'hidden'}):
         fields[item.get('name')] = item.get('value')
     return fields
-
-
-def getCounties(soup):
-    counties = {}
-    selectName = 'ctl00$ContentPlaceHolder1$usrCounty$cboCounty'
-    select = soup.find('select', {'name': selectName})
-    for item in select.find_all('option'):
-        counties[item.text.strip().upper()] = item.get('value')
-    return counties
 
 
 def matchString(string, stringList):
@@ -160,35 +155,59 @@ def getLee(num, predir, name, suffix, postdir, zipcode):
     return ppid, name, address
 
 
+def electionsFL(lastName, dob, num, county):
+    url = 'https://www.electionsfl.org/VoterInfo/asmx/service1.asmx/'
+    county = county.replace(' ', '').lower()
+    header = {'Content-Type': 'application/json; charset=UTF-8'}
+    session = Session()
+    payload = {'LastName': lastName, 'BirthDate': dob, 'StNumber': num,
+               'County': county, 'FirstName': '', 'challengeValue': '',
+               'responseValue': ''}
+    response = session.post(url + 'FindVoter', data=json.dumps(payload),
+                            headers=header)
+    print response.text
+    voterID = str(json.loads(json.loads(response.text)['d'])[0]['FVRSVoterIdNumber'])
+    payload = {'FVRSVoterIDNumber': voterID, 'CurCounty': county}
+    response = session.post(url + 'GetElectionInfo', data=json.dumps(payload),
+                            headers=header)
+    print response.text
+    data = json.loads(json.loads(response.text)['d'])[0]
+    ppid = ''
+    name = data['place_name']
+    address = data['office_location']
+    return ppid, name, address
+
+
 def run(row):
-    num, predir, name, suffix, postdir, city, zipcode, county = getValues(row)
-    while True:
-        try:
-            if county.upper() == 'PALM BEACH':
-                url = 'https://www.pbcelections.org/'
-                eid = '139'
-                pollingInfo = precinctFinder(url, num, predir, name, suffix,
-                                             postdir, city, zipcode, eid)
-            elif county.upper() == 'SARASOTA':
-                url = 'https://www.sarasotavotes.com/'
-                eid = '82'
-                pollingInfo = precinctFinder(url, num, predir, name, suffix,
-                                             postdir, city, zipcode, eid)
-            elif county.upper() == 'VOLUSIA':
-                fullcounty = 'volusia'
-                pollingInfo = voterFocus(num, predir, name, suffix, postdir,
-                                         city, zipcode, fullcounty)
-            elif county.upper() == 'OSCEOLA':
-                fullcounty = 'osceola'
-                pollingInfo = voterFocus(num, predir, name, suffix, postdir,
-                                         city, zipcode, fullcounty)
-            elif county.upper() == 'LEE':
-                pollingInfo = getLee(num, predir, name, suffix, postdir,
-                                     zipcode)
-            else:
-                return '', '', ''
-            return pollingInfo
-        except Exception as inst:
-            print type(inst)
-            print inst
+    num, predir, name, suffix, postdir, city, zipcode, county, dob, lastName = getValues(row)
+    try:
+        if county.upper() == 'PALM BEACH':
+            url = 'https://www.pbcelections.org/'
+            eid = '139'
+            pollingInfo = precinctFinder(url, num, predir, name, suffix,
+                                         postdir, city, zipcode, eid)
+        elif county.upper() == 'SARASOTA':
+            url = 'https://www.sarasotavotes.com/'
+            eid = '82'
+            pollingInfo = precinctFinder(url, num, predir, name, suffix,
+                                         postdir, city, zipcode, eid)
+        elif county.upper() == 'VOLUSIA':
+            fullcounty = 'volusia'
+            pollingInfo = voterFocus(num, predir, name, suffix, postdir,
+                                     city, zipcode, fullcounty)
+        elif county.upper() == 'OSCEOLA':
+            fullcounty = 'osceola'
+            pollingInfo = voterFocus(num, predir, name, suffix, postdir,
+                                     city, zipcode, fullcounty)
+        elif county.upper() == 'LEE':
+            pollingInfo = getLee(num, predir, name, suffix, postdir,
+                                 zipcode)
+        elif county.upper() == 'ST LUCIE' or county.upper() == 'LAKE':
+            pollingInfo = electionsFL(lastName, dob, num, county)
+        else:
             return '', '', ''
+        return pollingInfo
+    except Exception as inst:
+        print type(inst)
+        print inst
+        return '', '', ''

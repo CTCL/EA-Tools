@@ -19,8 +19,8 @@ def findClients(cursor):
 
 def getProject(clientID, cursor):
     cursor.execute('''SELECT project_id
-                    FROM decc_form_client
-                    WHERE id = {0}
+                      FROM decc_form_client
+                      WHERE id = {0}
                     '''.format(clientID))
     value = cursor.fetchall()[0][0]
     return value
@@ -67,9 +67,9 @@ def createPart(orderID, typeID, state, rush, van, match, quad, cursor, db):
                                  match))
     db.commit()
     cursor.execute('''SELECT MAX(id)
-                                            FROM decc_form_part
-                                            WHERE order_id = {0}
-                                            '''.format(orderID))
+                      FROM decc_form_part
+                      WHERE order_id = {0}
+                      '''.format(orderID))
     result = cursor.fetchall()[0][0]
     return result
 
